@@ -1,4 +1,4 @@
-package fctreddit.clients;
+package fctreddit.clients.UsersClients;
 
 import java.net.URI;
 import java.util.List;
@@ -25,7 +25,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 //import fctreddit.clients.java.UsersClient;
 
-public class RestUsersClient /*extends UsersClient*/ {
+public class RestUsersClient extends UsersClient {
 	private static Logger Log = Logger.getLogger(RestUsersClient.class.getName());
 
     private static final int READ_TIMEOUT = 5000;
