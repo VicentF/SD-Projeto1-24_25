@@ -15,16 +15,10 @@ import fctreddit.clients.UsersClients.RestUsersClient; //temporario, depois vamo
 public class JavaImages implements Image {
 
     private final String baseDir;
-    //private JavaUsers users;
-    //private JavaContent content;
 
     public JavaImages() {
         baseDir = System.getProperty("user.dir") + File.separator + "images" + File.separator;
     }
-
-    /*public void setUsers(JavaUsers users) {
-        this.users = users;
-    }*/
 
     
     @Override
