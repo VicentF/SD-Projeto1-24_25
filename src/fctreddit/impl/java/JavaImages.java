@@ -10,25 +10,27 @@ import java.util.UUID;
 import fctreddit.api.User;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
+import fctreddit.clients.UsersClients.RestUsersClient; //temporario, depois vamos querer um tipo genérico de usersclient idealmente
 
 public class JavaImages implements Image {
 
     private final String baseDir;
-    private JavaUsers users;
+    //private JavaUsers users;
     //private JavaContent content;
 
     public JavaImages() {
         baseDir = System.getProperty("user.dir") + File.separator + "images" + File.separator;
     }
 
-    public void setUsers(JavaUsers users) {
+    /*public void setUsers(JavaUsers users) {
         this.users = users;
-    }
+    }*/
 
     
     @Override
     public Result<String> createImage(String userId, byte[] imageContents, String password) {
-        Result<User> resUser = users.getUser(userId, password);
+        RestUsersClient client = new RestUsersClient();
+        Result<User> resUser = client.getUser(userId, password);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
         }
@@ -77,7 +79,8 @@ public class JavaImages implements Image {
         if(password == null){
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
-        Result<User> resUser = users.getUser(userId, password);
+        RestUsersClient client = new RestUsersClient();
+        Result<User> resUser = client.getUser(userId, password);
         if(!resUser.isOK()){
             return Result.error(resUser.error());
         }

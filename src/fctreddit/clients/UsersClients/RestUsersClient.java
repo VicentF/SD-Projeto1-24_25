@@ -216,6 +216,7 @@ public class RestUsersClient extends UsersClient {
 		return null;
 	}
 
+	//era fixe meter isto tudo numa data class maybe?
 	public static ErrorCode getErrorCodeFrom(int status) {
 		return switch (status) {
 		case 200, 209 -> ErrorCode.OK;

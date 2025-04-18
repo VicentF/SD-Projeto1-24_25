@@ -1,7 +1,5 @@
 package fctreddit.impl.java;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import fctreddit.api.User;
 import fctreddit.api.java.Result;
@@ -15,14 +13,14 @@ import jakarta.ws.rs.core.Response.Status;
 @Singleton
 public class JavaUsers implements Users{
 
-    private final Map<String, User> users;
+    //private final Map<String, User> users;
     private final Hibernate hibernate;
     /*private JavaImages images;
     private JavaContent content;*/
 
     public JavaUsers() {
         hibernate = Hibernate.getInstance();
-		this.users = new ConcurrentHashMap<>();
+		//this.users = new ConcurrentHashMap<>();
 	}
 
     /*public void setImages(JavaImages images){
@@ -33,7 +31,8 @@ public class JavaUsers implements Users{
         this.content = content;
     }*/
 
-    public Result<String> createUserHibernate(User user){
+    @Override
+    public Result<String> createUser(User user){
         String userId = user.getUserId();
 		if (userId == null || user.getPassword() == null || user.getFullName() == null
 				|| user.getEmail() == null) {
@@ -51,8 +50,7 @@ public class JavaUsers implements Users{
 		return Result.ok(userId);
     }
 
-    @Override
-    public Result<String> createUser(User user) {
+    /*public Result<String> createUser(User user) {
         String userId = user.getUserId();
         if(users.containsKey(userId)){
             System.out.println("User already exists.");
@@ -66,9 +64,10 @@ public class JavaUsers implements Users{
         System.out.printf("User added: ID %s; Full name: %s; Email: %s; Password: %s ", userId, user.getFullName(), user.getEmail(), user.getPassword());
         return Result.ok(userId);
 
-    }
+    }*/
 
-    public Result<User> getUserHibernate(String userId, String password){
+    @Override
+    public Result<User> getUser(String userId, String password){
 		// Check if user is valid
 		if (userId == null || password == null) {
 			System.out.println("UserId or password null.");
@@ -98,8 +97,7 @@ public class JavaUsers implements Users{
 		return Result.ok(user);
     }
 
-    @Override
-    public Result<User> getUser(String userId, String password) {
+    /*public Result<User> getUser(String userId, String password) {
         if(!users.containsKey(userId)){
             System.out.println("User doesn't exist");
             return Result.error(Result.ErrorCode.NOT_FOUND);
@@ -112,9 +110,10 @@ public class JavaUsers implements Users{
 
         System.out.println("Here's the user my boy");
         return Result.ok(user);
-    }
+    }*/
 
-    public Result<User> updateUserHibernate(String userId, String password, User user){
+    @Override
+    public Result<User> updateUser(String userId, String password, User user){
         // Check if user is valid
 		Result<User> oldUserRes = this.getUser(userId, password);
         if(!oldUserRes.isOK()){
@@ -144,7 +143,7 @@ public class JavaUsers implements Users{
 		return Result.ok(oldUser);
     }
 
-    @Override
+    /*@Override
     public Result<User> updateUser(String userId, String password, User user) {
         Result<User> getRes = getUser(userId, password);
         if(!getRes.isOK()){
@@ -167,9 +166,10 @@ public class JavaUsers implements Users{
             oldUser.setFullName(user.getFullName());
         }
         return Result.ok(oldUser);
-    }
+    }*/
 
-    public Result<User> deleteUserHibernate(String userId, String password){
+    @Override
+    public Result<User> deleteUser(String userId, String password){
 		Result<User> userRes = this.getUser(userId, password);
         if(!userRes.isOK()){
             return Result.error(userRes.error());
@@ -186,7 +186,7 @@ public class JavaUsers implements Users{
 		return Result.ok(user);
     }
 
-    @Override
+    /*@Override
     public Result<User> deleteUser(String userId, String password) {
         Result<User> getRes = getUser(userId, password);
         if(!getRes.isOK()){
@@ -197,18 +197,22 @@ public class JavaUsers implements Users{
         //tmb é preciso remover a referência a este user em todos os posts que ele fez
         //content.deleteUserId(userId);
         return Result.ok(getRes.value());
-    }
+    }*/
 
-    public Result<List<User>> searchUsersHibernate(String pattern){
+    @Override
+    public Result<List<User>> searchUsers(String pattern){
 		try {
 			List<User> list = hibernate.jpql("SELECT u FROM User u WHERE u.userId LIKE '%" + pattern +"%'", User.class);
+            for(User user : list){
+                user.setPassword("");
+            }
 			return Result.ok(list);
 		} catch (Exception e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
 		}
     }
 
-    @Override
+    /*@Override
     public Result<List<User>> searchUsers(String pattern) {
         // TODO meter as passwords a "" IMPORTANTE
         List<User> result;
@@ -220,5 +224,5 @@ public class JavaUsers implements Users{
                 .toList();
         }
         return Result.ok(result);
-    }
+    }*/
 }
