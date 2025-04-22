@@ -1,29 +1,32 @@
 package fctreddit.impl.java;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import fctreddit.api.User;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
-import fctreddit.clients.UsersClients.RestUsersClient; //temporario, depois vamos querer um tipo genérico de usersclient idealmente
+import fctreddit.clients.UsersClients.RestUsersClient;
 
 public class JavaImages implements Image {
 
     private final String baseDir;
+	private static Logger Log = Logger.getLogger(JavaImages.class.getName());
+    private static RestUsersClient client;
 
-    public JavaImages() {
-        baseDir = System.getProperty("user.dir") + File.separator + "images" + File.separator;
+    public JavaImages(String uri) {
+        this.baseDir = uri;
+        client = new RestUsersClient();
     }
 
     
     @Override
     public Result<String> createImage(String userId, byte[] imageContents, String password) {
-        RestUsersClient client = new RestUsersClient();
+        Log.info("Create Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         Result<User> resUser = client.getUser(userId, password);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
@@ -31,32 +34,30 @@ public class JavaImages implements Image {
         if (imageContents.length == 0) {
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
-        Path userDir = Paths.get(baseDir, userId);
-        
-        if (!Files.exists(userDir)) {
-            try {
-                Files.createDirectories(userDir);
-            } catch (IOException e) {
-                return Result.error(Result.ErrorCode.BAD_REQUEST);
-            }
-        }
 
         String imageName = UUID.randomUUID().toString() + ".png";
-        Path imagePath = userDir.resolve(imageName);
+        Path imagePath = Paths.get(userId, imageName);
+
+        try {
+            Files.createDirectories(imagePath.getParent());
+        } catch (Exception e) {
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
 
         try {
             Files.write(imagePath, imageContents);
         } catch (IOException e) {
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
-        String imageUri = imagePath.toUri().toString();
         
-        return Result.ok(imageUri); //perguntar se é suposto ser o uri absoluto ou só esta situation
+        Log.info("JAVA: Image created with ID: " + imageName);
+        return Result.ok(baseDir + imagePath.toString()); //perguntar se é suposto ser o uri absoluto ou só esta situation
     }
 
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
-        Path imagePath = Paths.get(baseDir, userId, imageId);
+        Log.info("Get Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        Path imagePath = Paths.get(userId, imageId);
         if (!Files.exists(imagePath)) {
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
@@ -73,12 +74,11 @@ public class JavaImages implements Image {
         if(password == null){
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
-        RestUsersClient client = new RestUsersClient();
         Result<User> resUser = client.getUser(userId, password);
         if(!resUser.isOK()){
             return Result.error(resUser.error());
         }
-        Path imagePath = Paths.get(baseDir, userId, imageId);
+        Path imagePath = Paths.get(userId, imageId);
         if (!Files.exists(imagePath)) {
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }

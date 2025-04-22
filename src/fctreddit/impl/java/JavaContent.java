@@ -14,18 +14,17 @@ import fctreddit.impl.persistence.Hibernate;
 public class JavaContent implements  Content{
     //well i'll be damned
     private final Map<String, Post> posts;
-    //private JavaUsers users;
-    //private JavaImages images;
     private final Hibernate hibernate;
+    private final RestUsersClient client;
 
     public JavaContent() {
         hibernate = Hibernate.getInstance();
         posts = new ConcurrentHashMap<>();
+        client = new RestUsersClient();
     }
 
     @Override
     public Result<String> createPost(Post post, String userPassword){
-        RestUsersClient client = new RestUsersClient();
         Result<User> resUser = client.getUser(post.getAuthorId(), userPassword);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());

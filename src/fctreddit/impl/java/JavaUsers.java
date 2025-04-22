@@ -22,8 +22,7 @@ public class JavaUsers implements Users{
     @Override
     public Result<String> createUser(User user){
         String userId = user.getUserId();
-		if (userId == null || user.getPassword() == null || user.getFullName() == null
-				|| user.getEmail() == null) {
+		if (!isValid(userId, user.getPassword(), user.getFullName(), user.getEmail())) {
             System.out.println("User object invalid.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
 		}
@@ -32,7 +31,7 @@ public class JavaUsers implements Users{
 			hibernate.persist(user);
 		} catch (Exception e) {
 			e.printStackTrace(); //Most likely the exception is due to the user already existing...
-			Result.error(Result.ErrorCode.CONFLICT);
+			return Result.error(Result.ErrorCode.CONFLICT);
 		}
 		
 		return Result.ok(userId);
@@ -41,10 +40,10 @@ public class JavaUsers implements Users{
     @Override
     public Result<User> getUser(String userId, String password){
 		// Check if user is valid
-		if (userId == null || password == null) {
+		/*if (userId == null || password == null) {
 			System.out.println("UserId or password null.");
             return Result.error(Result.ErrorCode.BAD_REQUEST);
-		}
+		}*/
 
 		User user = null;
 		try {
@@ -129,5 +128,12 @@ public class JavaUsers implements Users{
 		} catch (Exception e) {
             return Result.error(ErrorCode.INTERNAL_ERROR);
 		}
+    }
+
+	private boolean isValid(String... params) {
+        for (String param : params) {
+            if (param == null || param.isBlank()) return false;
+        }
+        return true;
     }
 }

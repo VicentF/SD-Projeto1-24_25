@@ -10,7 +10,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import fctreddit.impl.rest.ImagesResource;
 import fctreddit.server.Discovery;
 
-public class ImagesServer {
+public class ImageServer {
 
 	private static Logger Log = Logger.getLogger(UsersServer.class.getName());
 
@@ -27,10 +27,10 @@ public class ImagesServer {
 		try {
 			
 		ResourceConfig config = new ResourceConfig();
-		config.register(ImagesResource.class);
 
 		String ip = InetAddress.getLocalHost().getHostAddress();
 		String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
+		config.register(new ImagesResource(serverURI));
 		JdkHttpServerFactory.createHttpServer( URI.create(serverURI), config);
 	
 		Log.info(String.format("%s Server ready @ %s\n",  SERVICE, serverURI));

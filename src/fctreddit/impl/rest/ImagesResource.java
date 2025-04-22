@@ -15,24 +15,25 @@ public class ImagesResource implements RestImage{
 
     final Image impl;
 
-    public ImagesResource() {
-        impl = new JavaImages();
+    public ImagesResource(String uri) {
+        impl = new JavaImages(uri + "/image/");
     }
 
     @Override
     public String createImage(String userId, byte[] imageContents, String password) {
-        Log.info("Create Image");
+        Log.info("Create Image :: Resource");
 		
 		Result<String> res = impl.createImage(userId, imageContents, password);
 		if(!res.isOK()) {
 			throw new WebApplicationException(errorCodeToStatus(res.error()));
 		}
+        Log.info("RESOURCE: Image created with ID: " + res.value());
 		return res.value();
     }
 
     @Override
     public byte[] getImage(String userId, String imageId) {
-        Log.info("Get Image");
+        Log.info("Get Image :: Resource");
 
         Result<byte[]> res = impl.getImage(userId, imageId);
         if(!res.isOK()) {
