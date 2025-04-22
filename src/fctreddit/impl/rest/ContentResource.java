@@ -13,18 +13,18 @@ import jakarta.ws.rs.core.Response.Status;
 
 public class ContentResource implements RestContent {
     
-    private static Logger Log = Logger.getLogger(ContentResource.class.getName());
+    private static Logger Log = Logger.getLogger(ContentResource.class.getName()); 
     
     final Content impl;
     
-    public ContentResource() {
-        impl = new JavaContent();
+    public ContentResource(String uri) {
+        impl = new JavaContent(uri);
     }
     
 
     @Override
     public String createPost(Post post, String userPassword) {
-        Log.info("Create Post");
+        //Log.info("Create Post");
 
         Result<String> res = impl.createPost(post, userPassword);
         if(!res.isOK()) {
@@ -45,7 +45,7 @@ public class ContentResource implements RestContent {
 
     @Override
     public Post getPost(String postId) {
-        Log.info("Get Post");
+        //Log.info("Get Post");
         Result<Post> res = impl.getPost(postId);
         if(!res.isOK()) {
             throw new WebApplicationException(errorCodeToStatus(res.error()));

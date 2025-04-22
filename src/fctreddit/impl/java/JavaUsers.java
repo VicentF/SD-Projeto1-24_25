@@ -9,11 +9,13 @@ import fctreddit.impl.persistence.Hibernate;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
+import java.util.logging.Logger;
 
 @Singleton
 public class JavaUsers implements Users{
 
     private final Hibernate hibernate;
+	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
 
     public JavaUsers() {
         hibernate = Hibernate.getInstance();
@@ -39,16 +41,11 @@ public class JavaUsers implements Users{
 
     @Override
     public Result<User> getUser(String userId, String password){
-		// Check if user is valid
-		/*if (userId == null || password == null) {
-			System.out.println("UserId or password null.");
-            return Result.error(Result.ErrorCode.BAD_REQUEST);
-		}*/
-
 		User user = null;
 		try {
 			user = hibernate.get(User.class, userId);
 		} catch (Exception e) {
+			Log.info("JavaUsers :: Internal error getting user");
 			e.printStackTrace();
 			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 		}

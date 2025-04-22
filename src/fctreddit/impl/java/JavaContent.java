@@ -2,6 +2,7 @@ package fctreddit.impl.java;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import fctreddit.api.Post;
@@ -10,26 +11,49 @@ import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
 import fctreddit.clients.UsersClients.RestUsersClient;
 import fctreddit.impl.persistence.Hibernate;
+import java.util.logging.Logger;
 
 public class JavaContent implements  Content{
     //well i'll be damned
-    private final Map<String, Post> posts;
+    //private final Map<String, Post> posts;
     private final Hibernate hibernate;
     private final RestUsersClient client;
+    private final static Logger Log = Logger.getLogger(JavaContent.class.getName());
+    private static String serverUri;
+    private final Map<String, Object> postLocks = new ConcurrentHashMap<>();
 
-    public JavaContent() {
+    public JavaContent(String serverUri) {
         hibernate = Hibernate.getInstance();
-        posts = new ConcurrentHashMap<>();
+        this.serverUri = serverUri;
+        //posts = new ConcurrentHashMap<>();
         client = new RestUsersClient();
     }
 
     @Override
     public Result<String> createPost(Post post, String userPassword){
+        post.setCreationTimestamp(System.currentTimeMillis());
+        post.setPostId(UUID.randomUUID().toString());
         Result<User> resUser = client.getUser(post.getAuthorId(), userPassword);
         if (!resUser.isOK()) {
+            //Log.info("JavaContent :: User not found");
             return Result.error(resUser.error());
         }
-        hibernate.persist(post);
+        try{
+            hibernate.persist(post);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error persisting post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        if(post.getParentUrl() == null){
+            postLocks.put(post.getPostId(), new Object());
+        } else {
+            String parentId = post.getParentUrl().substring(post.getParentUrl().lastIndexOf('/') + 1);
+            Object lock = postLocks.get(parentId);
+            synchronized(lock){
+                postLocks.notifyAll();
+            }
+        }
         return Result.ok(post.getPostId());
     }
 
@@ -64,8 +88,17 @@ public class JavaContent implements  Content{
 
     @Override
     public Result<Post> getPost(String postId) {
-        Post post = hibernate.get(Post.class, postId);
+        //Log.info("JavaContent :: Get Post");
+        Post post = null;
+        try{
+            post = hibernate.get(Post.class, postId);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error getting post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
         if(post == null){
+            //Log.info("JavaContent :: Post not found");
             return Result.error(Result.ErrorCode.NOT_FOUND);
         } else{
             return Result.ok(post);
@@ -74,18 +107,26 @@ public class JavaContent implements  Content{
 
     @Override
     public Result<List<String>> getPostAnswers(String postId, long maxTimeout){
-        if(maxTimeout > 0){
-            try {
-                Thread.sleep(maxTimeout);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
-            }
-        }
+        Log.info("JavaContent :: Get Post Answers");
         if(!this.getPost(postId).isOK()){
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
-        String query = "SELECT p.postId FROM Post p WHERE p.parentUrl LIKE CONCAT('%', :postId, '%')";
+        if(maxTimeout > 0){
+            Object lock = postLocks.get(postId);
+            try {
+                synchronized(lock){
+                    lock.wait(maxTimeout);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Log.info("JavaContent :: Internal error sleeping thread");
+                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+            }
+        }
+        //construir o url completo do postId NAO usar o 'LIKE'
+        Log.info("JavaContent :: p.parentUrl = " + serverUri + postId);
+        String parentUrl = serverUri + postId;
+        String query = "SELECT p.postId FROM Post p WHERE p.parentUrl = '" + parentUrl + "'"; //+ "' ORDER BY p.creationTimestamp ASC";
         List<String> sortedKeys = hibernate.jpql(query, String.class);
         return Result.ok(sortedKeys);
     }
@@ -110,12 +151,11 @@ public class JavaContent implements  Content{
 
     @Override
     public Result<Void> deletePost(String postId, String userPassword) {
-        RestUsersClient client = new RestUsersClient();
         Result<User> resUser = client.getUser(postId, userPassword);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
         }
-        posts.remove(postId);
+        hibernate.delete(postId);
         //mandar a media(images) para o lixo as well
         String query = "SELECT p FROM Post p WHERE p.parentUrl LIKE CONCAT('%', :postId, '%')";
         List<Post> postsToUpdate = hibernate.jpql(query, Post.class);
@@ -163,16 +203,38 @@ public class JavaContent implements  Content{
     }
 
     //apagar os userIds dos posts do user userId
-    public Result<Post> deleteUserId(String userId) {
+    /*public Result<Post> deleteUserId(String userId) {
         // DELETE FROM Post WHERE authorId LIKE '%userId%'
         List<String> postsToUpdate = posts.entrySet().stream()
             .filter(entry -> userId.equals(entry.getValue().getAuthorId()))
             .map(Map.Entry::getKey)
             .toList();
         for (String key : postsToUpdate) {
-            posts.get(key).setAuthorId(null);
+            Post post  = null;
+            try{
+                post = hibernate.get(Post.class, key);
+            } catch (Exception e) {
+                Log.info("JavaContent :: Internal error deleting userId");
+                e.printStackTrace();
+                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+            }
+            post.setAuthorId(null);
+            try {
+                hibernate.update(post);
+            } catch (Exception e) {
+                Log.info("JavaContent :: Internal error updating post");
+                e.printStackTrace();
+                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+            }
         }
         return Result.ok(null);
+    }*/
+
+    private boolean isValid(String... params) {
+        for (String param : params) {
+            if (param == null || param.isBlank()) return false;
+        }
+        return true;
     }
     
 }

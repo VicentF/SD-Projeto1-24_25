@@ -23,7 +23,7 @@ public class UsersResource implements RestUsers {
 
 	@Override
 	public String createUser(User user) {
-		Log.info("createUser : " + user);
+		//Log.info("createUser : " + user);
 		
 		Result<String> res = impl.createUser(user);
 		if(!res.isOK()) {
@@ -34,7 +34,7 @@ public class UsersResource implements RestUsers {
 
 	@Override
 	public User getUser(String userId, String password) {
-		Log.info("getUser : user = " + userId + "; pwd = " + password);
+		//Log.info("getUser : user = " + userId + "; pwd = " + password);
 
 		Result<User> res = impl.getUser(userId, password);
 		if(!res.isOK()) {

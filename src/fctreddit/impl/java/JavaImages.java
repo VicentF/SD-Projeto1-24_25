@@ -26,7 +26,7 @@ public class JavaImages implements Image {
     
     @Override
     public Result<String> createImage(String userId, byte[] imageContents, String password) {
-        Log.info("Create Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        //Log.info("Create Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         Result<User> resUser = client.getUser(userId, password);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
@@ -50,13 +50,13 @@ public class JavaImages implements Image {
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
         
-        Log.info("JAVA: Image created with ID: " + imageName);
+        //Log.info("JAVA: Image created with ID: " + imageName);
         return Result.ok(baseDir + imagePath.toString()); //perguntar se é suposto ser o uri absoluto ou só esta situation
     }
 
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
-        Log.info("Get Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        //Log.info("Get Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         Path imagePath = Paths.get(userId, imageId);
         if (!Files.exists(imagePath)) {
             return Result.error(Result.ErrorCode.NOT_FOUND);
