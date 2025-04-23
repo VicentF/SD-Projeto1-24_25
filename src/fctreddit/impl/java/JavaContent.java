@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 import fctreddit.api.Post;
 import fctreddit.api.User;
@@ -11,7 +12,6 @@ import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
 import fctreddit.clients.UsersClients.RestUsersClient;
 import fctreddit.impl.persistence.Hibernate;
-import java.util.logging.Logger;
 
 public class JavaContent implements  Content{
     //well i'll be damned
@@ -38,6 +38,7 @@ public class JavaContent implements  Content{
             //Log.info("JavaContent :: User not found");
             return Result.error(resUser.error());
         }
+
         try{
             hibernate.persist(post);
         } catch (Exception e) {
@@ -48,10 +49,12 @@ public class JavaContent implements  Content{
         if(post.getParentUrl() == null){
             postLocks.put(post.getPostId(), new Object());
         } else {
-            String parentId = post.getParentUrl().substring(post.getParentUrl().lastIndexOf('/') + 1);
-            Object lock = postLocks.get(parentId);
+            //Log.info("JavaContent :: Post has parentUrl: " + post.getParentUrl());
+            String[] split = post.getParentUrl().split("/");
+            String parentPostId = split[split.length - 1];
+            Object lock = postLocks.get(parentPostId);
             synchronized(lock){
-                postLocks.notifyAll();
+                lock.notifyAll();
             }
         }
         return Result.ok(post.getPostId());
@@ -107,7 +110,7 @@ public class JavaContent implements  Content{
 
     @Override
     public Result<List<String>> getPostAnswers(String postId, long maxTimeout){
-        Log.info("JavaContent :: Get Post Answers");
+        //Log.info("JavaContent :: Get Post Answers");
         if(!this.getPost(postId).isOK()){
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
@@ -123,10 +126,9 @@ public class JavaContent implements  Content{
                 return Result.error(Result.ErrorCode.INTERNAL_ERROR);
             }
         }
-        //construir o url completo do postId NAO usar o 'LIKE'
-        Log.info("JavaContent :: p.parentUrl = " + serverUri + postId);
-        String parentUrl = serverUri + postId;
-        String query = "SELECT p.postId FROM Post p WHERE p.parentUrl = '" + parentUrl + "'"; //+ "' ORDER BY p.creationTimestamp ASC";
+        //Log.info("JavaContent :: p.parentUrl = " + serverUri + "/" + postId);
+        String parentUrl = serverUri + "/posts/" + postId;
+        String query = "SELECT p.postId FROM Post p WHERE p.parentUrl = '" + parentUrl + "' ORDER BY p.creationTimestamp ASC";
         List<String> sortedKeys = hibernate.jpql(query, String.class);
         return Result.ok(sortedKeys);
     }

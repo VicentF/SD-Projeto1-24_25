@@ -55,7 +55,7 @@ public class ContentResource implements RestContent {
 
     @Override
     public List<String> getPostAnswers(String postId, long timeout) {
-        Log.info("Get Post Answers");
+        //Log.info("Get Post Answers");
         Result<List<String>> res = impl.getPostAnswers(postId, timeout);
         if(!res.isOK()) {
             throw new WebApplicationException(errorCodeToStatus(res.error()));
