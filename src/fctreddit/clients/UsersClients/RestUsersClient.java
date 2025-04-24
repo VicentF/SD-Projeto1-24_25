@@ -1,7 +1,6 @@
 package fctreddit.clients.UsersClients;
 
 import java.net.URI;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.glassfish.jersey.client.ClientConfig;
@@ -16,17 +15,16 @@ import fctreddit.server.rest.UsersServer;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation.Builder;
 import jakarta.ws.rs.client.WebTarget;
-import jakarta.ws.rs.core.GenericType;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 //import fctreddit.clients.java.UsersClient;
 
 public class RestUsersClient extends UsersClient {
-	private static Logger Log = Logger.getLogger(RestUsersClient.class.getName());
+	private static final Logger Log = Logger.getLogger(RestUsersClient.class.getName());
+	private static Discovery discovery;
 
     private static final int READ_TIMEOUT = 5000;
 	private static final int CONNECT_TIMEOUT = 5000;
@@ -42,7 +40,7 @@ public class RestUsersClient extends UsersClient {
 	
 	public RestUsersClient() {
 		try{
-			Discovery discovery = new Discovery(Discovery.DISCOVERY_ADDR);
+			discovery = new Discovery(Discovery.DISCOVERY_ADDR);
 			discovery.start();
 
 			this.serverURI = discovery.knownUrisOf(UsersServer.SERVICE, 1)[0];
@@ -62,7 +60,7 @@ public class RestUsersClient extends UsersClient {
 	}
 
 	//post
-	public Result<String> createUser(User user) {
+	/*public Result<String> createUser(User user) {
 		Response r = executeOperationPost( target.request()
 				.accept(MediaType.APPLICATION_JSON), Entity.json(user) );
 		if(r == null) {
@@ -75,7 +73,7 @@ public class RestUsersClient extends UsersClient {
 		else {
 			return Result.ok(r.readEntity(String.class));
 		}
-	}
+	}*/
 
 	//get
 	public Result<User> getUser(String userId, String pwd) {
@@ -97,7 +95,7 @@ public class RestUsersClient extends UsersClient {
 	
 	
 	//put
-	public Result<User> updateUser(String userId, String password, User user) {
+	/*public Result<User> updateUser(String userId, String password, User user) {
 		Response r = executeOperationPut(target.path(userId)
 			.queryParam(RestUsers.PASSWORD, password).request().accept(MediaType.APPLICATION_JSON), Entity.json(user));
 		if(r == null) {
@@ -110,10 +108,10 @@ public class RestUsersClient extends UsersClient {
 		else {
 			return Result.ok(r.readEntity(User.class));
 		}
-	}
+	}*/
 
 	//delete
-	public Result<User> deleteUser(String userId, String password) {
+	/*public Result<User> deleteUser(String userId, String password) {
 		Response r = executeOperationDelete(target.path(userId)
 			.queryParam(RestUsers.PASSWORD, password).request()
 			.accept(MediaType.APPLICATION_JSON));
@@ -127,10 +125,10 @@ public class RestUsersClient extends UsersClient {
 		else {
 			return Result.ok(r.readEntity(User.class));
 		}
-	}
+	}*/
 
 	//get
-	public Result<List<User>> searchUsers(String pattern) {
+	/*public Result<List<User>> searchUsers(String pattern) {
 		Response r = executeOperationGet(target.queryParam(RestUsers.QUERY, pattern).request()
 			.accept(MediaType.APPLICATION_JSON));
 		if(r == null) {
@@ -143,9 +141,9 @@ public class RestUsersClient extends UsersClient {
 		else {
 			return Result.ok(r.readEntity(new GenericType<List<User>>() {}));
 		}
-	}
+	}*/
 
-	private Response executeOperationPost(Builder req, Entity<?> e){
+	/*private Response executeOperationPost(Builder req, Entity<?> e){
 		for(int i = 0; i < MAX_RETRIES; i++){
 			try {
 				return req.post(e);
@@ -161,7 +159,7 @@ public class RestUsersClient extends UsersClient {
 			}
 		}
 		return null;
-	}
+	}*/
 
 	private Response executeOperationGet(Builder req){
 		for(int i = 0; i < MAX_RETRIES; i++){
@@ -181,7 +179,7 @@ public class RestUsersClient extends UsersClient {
 		return null;
 	}
 
-	private Response executeOperationPut(Builder req, Entity<?> e){
+	/*private Response executeOperationPut(Builder req, Entity<?> e){
 		for(int i = 0; i < MAX_RETRIES; i++){
 			try{
 				return req.put(e);
@@ -215,9 +213,9 @@ public class RestUsersClient extends UsersClient {
 			}
 		}
 		return null;
-	}
+	}*/
 
-	//era fixe meter isto tudo numa data class maybe?
+	//era fixe meter isto tudo numa data class kinda maybe?
 	public static ErrorCode getErrorCodeFrom(int status) {
 		return switch (status) {
 		case 200, 209 -> ErrorCode.OK;

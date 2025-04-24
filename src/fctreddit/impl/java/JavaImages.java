@@ -16,11 +16,11 @@ public class JavaImages implements Image {
 
     private final String baseDir;
 	private static Logger Log = Logger.getLogger(JavaImages.class.getName());
-    private static RestUsersClient client;
+    private static final RestUsersClient client = new RestUsersClient();
 
     public JavaImages(String uri) {
         this.baseDir = uri;
-        client = new RestUsersClient();
+        //client = new RestUsersClient();
     }
 
     

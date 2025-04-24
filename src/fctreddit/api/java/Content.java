@@ -175,4 +175,15 @@ public interface Content {
 	 */
 	public Result<Integer> getDownVotes(String postId);
 
+	/**
+	 * Deletes the references to the author of all posts that  have 'userId' as their author.
+	 * The action must be authenticated by the password of the author.
+	 * @param userId unique identifier of the author
+	 * @param userPassword Password of author
+	 * @return 	NO_CONTENT in case of success
+	 * 			NOT_FOUND if the userId does not match an existing author
+	 * 			FORBIDDEN if the password is not correct
+	 */
+	public Result<Void> deleteAuthor(String userId, String userPassword);
+
 }

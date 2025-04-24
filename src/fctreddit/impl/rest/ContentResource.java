@@ -35,7 +35,7 @@ public class ContentResource implements RestContent {
 
     @Override
     public List<String> getPosts(long timestamp, String sortOrder) {
-        Log.info("Get Posts");
+        //Log.info("Get Posts");
         Result<List<String>> res = impl.getPosts(timestamp, sortOrder);
         if(!res.isOK()) {
             throw new WebApplicationException(errorCodeToStatus(res.error()));
@@ -65,7 +65,7 @@ public class ContentResource implements RestContent {
 
     @Override
     public Post updatePost(String postId, String userPassword, Post post) {
-        Log.info("Update Post");
+        //Log.info("Update Post");
         Result<Post> res = impl.updatePost(postId, userPassword, post);
         if(!res.isOK()) {
             throw new WebApplicationException(errorCodeToStatus(res.error()));
@@ -75,7 +75,7 @@ public class ContentResource implements RestContent {
 
     @Override
     public void deletePost(String postId, String userPassword) {
-        Log.info("Delete Post");
+        //Log.info("Delete Post");
         Result<Void> res = impl.deletePost(postId, userPassword);
         if(!res.isOK()) {
             throw new WebApplicationException(errorCodeToStatus(res.error()));
@@ -84,41 +84,63 @@ public class ContentResource implements RestContent {
 
     @Override
     public void upVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'upVotePost'");
+        Result<Void> res = impl.upVotePost(postId, userId, userPassword);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
     }
 
     @Override
     public void removeUpVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeUpVotePost'");
+        Result<Void> res = impl.removeUpVotePost(postId, userId, userPassword);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
     }
 
     @Override
     public void downVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'downVotePost'");
+        Result<Void> res = impl.downVotePost(postId, userId, userPassword);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
     }
 
     @Override
     public void removeDownVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeDownVotePost'");
+        Result<Void> res = impl.removeDownVotePost(postId, userId, userPassword);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
     }
 
     @Override
     public Integer getupVotes(String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getupVotes'");
+        Result<Integer> res = impl.getupVotes(postId);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
+        return res.value();
     }
 
     @Override
     public Integer getDownVotes(String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDownVotes'");
+        Result<Integer> res = impl.getDownVotes(postId);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
+        return res.value();
     }
 
-    //TODO se calhar meter esta situação numa data classe para não repetir código
+    @Override
+    public void deleteAuthor(String userId, String userPassword) {
+        Result<Void> res = impl.deleteAuthor(userId, userPassword);
+        if(!res.isOK()) {
+            throw new WebApplicationException(errorCodeToStatus(res.error()));
+        }
+    }
+
+    //TODO se calhar meter esta situação numa data class para não repetir código
     protected static Status errorCodeToStatus( Result.ErrorCode error ) {
     	Status status =  switch( error) {
     	case NOT_FOUND -> Status.NOT_FOUND; 
@@ -131,5 +153,8 @@ public class ContentResource implements RestContent {
     	
     	return status;
     }
+
+
+    
     
 }

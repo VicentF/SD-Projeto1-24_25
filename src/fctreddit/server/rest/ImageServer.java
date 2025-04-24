@@ -13,6 +13,7 @@ import fctreddit.server.Discovery;
 public class ImageServer {
 
 	private static Logger Log = Logger.getLogger(UsersServer.class.getName());
+	private static Discovery discovery;
 
 	static {
 		System.setProperty("java.net.preferIPv4Stack", "true");
@@ -35,7 +36,7 @@ public class ImageServer {
 	
 		Log.info(String.format("%s Server ready @ %s\n",  SERVICE, serverURI));
 		
-		Discovery discovery = new Discovery(Discovery.DISCOVERY_ADDR, SERVICE, serverURI);
+		discovery = new Discovery(Discovery.DISCOVERY_ADDR, SERVICE, serverURI);
 		discovery.start();
 
 		} catch( Exception e) {

@@ -24,7 +24,7 @@ public class Hibernate {
             .buildSessionFactory();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 

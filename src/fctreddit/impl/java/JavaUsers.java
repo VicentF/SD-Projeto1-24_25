@@ -1,24 +1,27 @@
 package fctreddit.impl.java;
 import java.util.List;
+import java.util.logging.Logger;
 
 import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.api.java.Users;
+import fctreddit.clients.ContentClients.RestContentClient;
 import fctreddit.impl.persistence.Hibernate;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response.Status;
-import java.util.logging.Logger;
 
 @Singleton
 public class JavaUsers implements Users{
 
     private final Hibernate hibernate;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
+	private static final RestContentClient contentClient = new RestContentClient();
 
     public JavaUsers() {
         hibernate = Hibernate.getInstance();
+		//contentClient = new RestContentClient();
 	}
 
     @Override
@@ -102,6 +105,7 @@ public class JavaUsers implements Users{
         if(!userRes.isOK()){
             return Result.error(userRes.error());
         }
+		contentClient.deleteAuthor(userId, password);
         User user = userRes.value();
 		try {
 			hibernate.delete(user);

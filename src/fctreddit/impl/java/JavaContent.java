@@ -11,29 +11,26 @@ import fctreddit.api.User;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
 import fctreddit.clients.UsersClients.RestUsersClient;
+import fctreddit.impl.Vote;
 import fctreddit.impl.persistence.Hibernate;
 
 public class JavaContent implements  Content{
-    //well i'll be damned
-    //private final Map<String, Post> posts;
     private final Hibernate hibernate;
-    private final RestUsersClient client;
+    private final static RestUsersClient usersClient = new RestUsersClient();
     private final static Logger Log = Logger.getLogger(JavaContent.class.getName());
-    private static String serverUri;
+    private final String serverUri;
     private final Map<String, Object> postLocks = new ConcurrentHashMap<>();
 
     public JavaContent(String serverUri) {
         hibernate = Hibernate.getInstance();
         this.serverUri = serverUri;
-        //posts = new ConcurrentHashMap<>();
-        client = new RestUsersClient();
     }
 
     @Override
     public Result<String> createPost(Post post, String userPassword){
         post.setCreationTimestamp(System.currentTimeMillis());
         post.setPostId(UUID.randomUUID().toString());
-        Result<User> resUser = client.getUser(post.getAuthorId(), userPassword);
+        Result<User> resUser = usersClient.getUser(post.getAuthorId(), userPassword);
         if (!resUser.isOK()) {
             //Log.info("JavaContent :: User not found");
             return Result.error(resUser.error());
@@ -50,6 +47,7 @@ public class JavaContent implements  Content{
             postLocks.put(post.getPostId(), new Object());
         } else {
             //Log.info("JavaContent :: Post has parentUrl: " + post.getParentUrl());
+            postLocks.put(post.getPostId(), new Object());
             String[] split = post.getParentUrl().split("/");
             String parentPostId = split[split.length - 1];
             Object lock = postLocks.get(parentPostId);
@@ -79,12 +77,17 @@ public class JavaContent implements  Content{
                     sortedKeys = hibernate.jpql(query, String.class);
                     break;
                 case MOST_REPLIES:
-                    query += " ORDER BY ( SELECT COUNT(c) FROM Post c WHERE c.parentUrl LIKE CONCAT('%', p.postId, '%')) DESC";
+                    String halfParentUrl = serverUri + "/posts/";
+                    query += " ORDER BY ( SELECT COUNT(c) FROM Post c WHERE c.parentUrl = CONCAT('" + halfParentUrl + "', p.postId)) DESC, p.creationTimestamp ASC";
                     sortedKeys = hibernate.jpql(query, String.class);
                     break;
                 default:
                     return Result.error(Result.ErrorCode.BAD_REQUEST);
             }
+        }
+        for(String postId : sortedKeys){
+            Post post = getPost(postId).value();
+            Log.info("TIMESTAMP :: " + post.getCreationTimestamp());
         }
         return Result.ok(sortedKeys);
     }
@@ -151,92 +154,253 @@ public class JavaContent implements  Content{
         return Result.ok(oldPost);
     }
 
-    @Override
-    public Result<Void> deletePost(String postId, String userPassword) {
-        Result<User> resUser = client.getUser(postId, userPassword);
-        if (!resUser.isOK()) {
-            return Result.error(resUser.error());
+    private Result<Void> deletePost(Post post){
+        try {
+            hibernate.delete(post);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error deleting post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
         }
-        hibernate.delete(postId);
-        //mandar a media(images) para o lixo as well
-        String query = "SELECT p FROM Post p WHERE p.parentUrl LIKE CONCAT('%', :postId, '%')";
+        //Image client para apagar a media
+        String postId = post.getPostId();
+        String parentUrl = serverUri + "/posts/" + postId;
+        String query = "SELECT p FROM Post p WHERE p.parentUrl = '" + parentUrl + "'";
         List<Post> postsToUpdate = hibernate.jpql(query, Post.class);
-        for(Post post : postsToUpdate){
-            post.setParentUrl(null);
-            hibernate.update(post);
+        for(Post p : postsToUpdate){
+            deletePost(p);
         }
         return Result.ok();
     }
 
     @Override
+    public Result<Void> deletePost(String postId, String userPassword) {
+        Result<Post> resPost = getPost(postId);
+        if(!resPost.isOK()){
+            return Result.error(resPost.error());
+        }
+        Post post = resPost.value();
+        String authorId = post.getAuthorId();
+        Result<User> resUser = usersClient.getUser(authorId, userPassword);
+        if (!resUser.isOK()) {
+            return Result.error(resUser.error());
+        }
+        deletePost(post);
+        return Result.ok();
+    }
+
+    //Metodo para evitir repetir código
+    private Result<Vote> checkVote(String userId, String postId, String userPassword, Result<Post> resPost) {
+        Result<User> resUser = usersClient.getUser(userId, userPassword);
+        if (!resUser.isOK()) {
+            return Result.error(resUser.error());
+        }
+        if(!resPost.isOK()){
+            return Result.error(resPost.error());
+        }
+        Vote vote;
+        try {
+            List<Vote> votes = hibernate.jpql("SELECT v FROM Vote v WHERE v.userId = '" + userId + "' AND v.postId = '" + postId + "'", Vote.class);
+            if(!votes.isEmpty()){
+                vote = votes.get(0);
+            } else {
+                vote = null;
+            }
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error getting vote");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        return Result.ok(vote);
+    }
+
+    @Override
     public Result<Void> upVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'upVotePost'");
+        Result<Post> resPost = getPost(postId);
+        Result<Vote> resVote = checkVote(userId, postId, userPassword, resPost);
+        if(!resVote.isOK()){
+            return Result.error(resVote.error());
+        }
+        Vote vote = resVote.value();
+        if(vote != null){
+            return Result.error(Result.ErrorCode.CONFLICT);
+        }
+        vote = new Vote(userId, postId, true);
+        try {
+            hibernate.persist(vote);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error persisting vote");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        Post post = resPost.value();
+        post.setUpVote(post.getUpVote() + 1);
+        try {
+            hibernate.update(post);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error updating post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+
+        return Result.ok();
     }
 
     @Override
     public Result<Void> removeUpVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeUpVotePost'");
+        Result<Post> resPost = getPost(postId);
+        Result<Vote> resVote = checkVote(userId, postId, userPassword, resPost);
+        if(!resVote.isOK()){
+            return Result.error(resVote.error());
+        }
+        Vote vote = resVote.value();
+        if(vote == null || !vote.isGood()){
+            return Result.error(Result.ErrorCode.CONFLICT);
+        }
+
+        try {
+            hibernate.delete(vote);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error deleting vote");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        Post post = resPost.value();
+        post.setUpVote(post.getUpVote() - 1);
+        try {
+            hibernate.update(post);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error updating post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+
+        return Result.ok();
     }
 
     @Override
     public Result<Void> downVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'downVotePost'");
+        Result<Post> resPost = getPost(postId);
+        Result<Vote> resVote = checkVote(userId, postId, userPassword, resPost);
+        if(!resVote.isOK()){
+            return Result.error(resVote.error());
+        }
+        Vote vote = resVote.value();
+        if(vote != null){
+            return Result.error(Result.ErrorCode.CONFLICT);
+        }
+        vote = new Vote(userId, postId, false);
+        try {
+            hibernate.persist(vote);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error persisting vote");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        Post post = resPost.value();
+        post.setDownVote(post.getDownVote() + 1);
+        try {
+            hibernate.update(post);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error updating post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+
+        return Result.ok();
     }
 
     @Override
     public Result<Void> removeDownVotePost(String postId, String userId, String userPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeDownVotePost'");
+        Result<Post> resPost = getPost(postId);
+        Result<Vote> resVote = checkVote(userId, postId, userPassword, resPost);
+        if(!resVote.isOK()){
+            return Result.error(resVote.error());
+        }
+        Vote vote = resVote.value();
+        if(vote == null || vote.isGood()){
+            return Result.error(Result.ErrorCode.CONFLICT);
+        }
+
+        try {
+            hibernate.delete(vote);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error deleting vote");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        Post post = resPost.value();
+        post.setDownVote(post.getDownVote() - 1);
+        try {
+            hibernate.update(post);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error updating post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+
+        return Result.ok();
     }
 
     @Override
     public Result<Integer> getupVotes(String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getupVotes'");
+        Result<Post> resPost = getPost(postId);
+        if(!resPost.isOK()){
+            Log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            return Result.error(resPost.error());
+        }
+        int upVotes = resPost.value().getUpVote();
+        return Result.ok(upVotes);
     }
 
     @Override
     public Result<Integer> getDownVotes(String postId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDownVotes'");
+        Result<Post> resPost = getPost(postId);
+        if(!resPost.isOK()){
+            Log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            return Result.error(resPost.error());
+        }
+        int downVotes = resPost.value().getDownVote();
+        return Result.ok(downVotes);
     }
 
-    //apagar os userIds dos posts do user userId
-    /*public Result<Post> deleteUserId(String userId) {
-        // DELETE FROM Post WHERE authorId LIKE '%userId%'
-        List<String> postsToUpdate = posts.entrySet().stream()
-            .filter(entry -> userId.equals(entry.getValue().getAuthorId()))
-            .map(Map.Entry::getKey)
-            .toList();
-        for (String key : postsToUpdate) {
-            Post post  = null;
-            try{
-                post = hibernate.get(Post.class, key);
-            } catch (Exception e) {
-                Log.info("JavaContent :: Internal error deleting userId");
-                e.printStackTrace();
-                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
-            }
-            post.setAuthorId(null);
+    @Override
+    public Result<Void> deleteAuthor(String userId, String userPassword) {
+        Result<User> resUser = usersClient.getUser(userId, userPassword);
+        if (!resUser.isOK()) {
+            return Result.error(resUser.error());
+        }
+        List<Post> postsToUpdate;
+        try{
+            postsToUpdate = hibernate.jpql("SELECT FROM Post p WHERE p.authorId = '" + userId + "'", Post.class);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error deleting authorId");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        for(Post p : postsToUpdate){
+            p.setAuthorId(null);
             try {
-                hibernate.update(post);
+                hibernate.update(p);
             } catch (Exception e) {
                 Log.info("JavaContent :: Internal error updating post");
                 e.printStackTrace();
                 return Result.error(Result.ErrorCode.INTERNAL_ERROR);
             }
         }
-        return Result.ok(null);
-    }*/
+        deleteUserVotes(userId);
+        return Result.ok();
+    }
 
-    private boolean isValid(String... params) {
-        for (String param : params) {
-            if (param == null || param.isBlank()) return false;
+    private Result<Void> deleteUserVotes(String userId) {
+        try {
+            hibernate.jpql("DELETE FROM Vote v WHERE v.userId = '" + userId + "'", Vote.class);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error deleting user votes");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
         }
-        return true;
+        return Result.ok();
     }
     
 }
