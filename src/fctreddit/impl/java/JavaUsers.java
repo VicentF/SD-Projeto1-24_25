@@ -21,11 +21,11 @@ public class JavaUsers implements Users{
 
     public JavaUsers() {
         hibernate = Hibernate.getInstance();
-		//contentClient = new RestContentClient();
 	}
 
     @Override
     public Result<String> createUser(User user){
+		Log.info("Erm JAVA_USERS");
         String userId = user.getUserId();
 		if (!isValid(userId, user.getPassword(), user.getFullName(), user.getEmail())) {
             System.out.println("User object invalid.");
@@ -101,6 +101,7 @@ public class JavaUsers implements Users{
 
     @Override
     public Result<User> deleteUser(String userId, String password){
+		Log.info("JavaUsers :: deleteUser() - userId: " + userId + ", password: " + password);
 		Result<User> userRes = this.getUser(userId, password);
         if(!userRes.isOK()){
             return Result.error(userRes.error());
