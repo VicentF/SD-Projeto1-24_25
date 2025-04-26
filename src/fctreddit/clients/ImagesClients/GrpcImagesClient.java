@@ -1,12 +1,9 @@
 package fctreddit.clients.ImagesClients;
 
-import com.google.common.primitives.Bytes;
 import com.google.protobuf.ByteString;
-import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
 import fctreddit.impl.grpc.generated_java.ImageGrpc;
 import fctreddit.impl.grpc.generated_java.ImageProtoBuf;
-import fctreddit.impl.grpc.generated_java.UsersGrpc;
 import io.grpc.*;
 import io.grpc.internal.PickFirstLoadBalancerProvider;
 
