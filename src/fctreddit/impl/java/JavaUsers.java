@@ -79,13 +79,13 @@ public class JavaUsers implements Users{
 
         User oldUser = oldUserRes.value();
 
-		if(user.getFullName() != null) {
+		if(isValid(user.getFullName())) {
 			oldUser.setFullName(user.getFullName());
 		}
-		if(user.getEmail() != null) {
+		if(isValid(user.getEmail())) {
 			oldUser.setEmail(user.getEmail());
 		}
-		if(user.getPassword() != null) {
+		if(isValid(user.getPassword())) {
 			oldUser.setPassword(user.getPassword());
 		}
 		try{
