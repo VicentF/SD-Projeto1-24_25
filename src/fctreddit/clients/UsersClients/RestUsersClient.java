@@ -77,7 +77,6 @@ public class RestUsersClient extends UsersClient {
 
 	//get
 	public Result<User> getUser(String userId, String pwd) {
-		Log.info("RUC :: getUser : user = " + userId + "; pwd = " + pwd);
 		Response r = executeOperationGet(target.path(userId)
 			.queryParam(RestUsers.PASSWORD, pwd).request()
 			.accept(MediaType.APPLICATION_JSON));

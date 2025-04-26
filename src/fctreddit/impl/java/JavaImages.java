@@ -20,13 +20,11 @@ public class JavaImages implements Image {
 
     public JavaImages(String uri) {
         this.baseDir = uri;
-        //client = new RestUsersClient();
     }
 
     
     @Override
     public Result<String> createImage(String userId, byte[] imageContents, String password) {
-        //Log.info("Create Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         Result<User> resUser = client.getUser(userId, password);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
@@ -56,7 +54,6 @@ public class JavaImages implements Image {
 
     @Override
     public Result<byte[]> getImage(String userId, String imageId) {
-        //Log.info("Get Image AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         Path imagePath = Paths.get(userId, imageId);
         if (!Files.exists(imagePath)) {
             return Result.error(Result.ErrorCode.NOT_FOUND);

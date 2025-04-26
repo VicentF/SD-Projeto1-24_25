@@ -7,6 +7,7 @@ import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.api.java.Users;
 import fctreddit.clients.ContentClients.RestContentClient;
+import fctreddit.clients.ImagesClients.RestImagesClient;
 import fctreddit.impl.persistence.Hibernate;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.WebApplicationException;
@@ -17,7 +18,8 @@ public class JavaUsers implements Users{
 
     private final Hibernate hibernate;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
-	private static final RestContentClient contentClient = new RestContentClient();
+	private static RestContentClient contentClient = null;
+	private static RestImagesClient imageClient = null;
 
     public JavaUsers() {
         hibernate = Hibernate.getInstance();
@@ -83,9 +85,6 @@ public class JavaUsers implements Users{
 		if(user.getEmail() != null) {
 			oldUser.setEmail(user.getEmail());
 		}
-		/*if(user.getAvatar() != null) {
-			oldUser.setAvatarURI(user.getAvatar());
-		}*/
 		if(user.getPassword() != null) {
 			oldUser.setPassword(user.getPassword());
 		}
@@ -98,14 +97,33 @@ public class JavaUsers implements Users{
 		return Result.ok(oldUser);
     }
 
+	private static void initializeContentClient() {
+		if (contentClient == null) {
+			contentClient = new RestContentClient();
+		}
+	}
+
+	private static void initializeImagesClient() {
+		if (imageClient == null) {
+			imageClient = new RestImagesClient();
+		}
+	}
+
     @Override
     public Result<User> deleteUser(String userId, String password){
-		Log.info("JavaUsers :: deleteUser() - userId: " + userId + ", password: " + password);
+		//Log.info("JavaUsers :: deleteUser() - userId: " + userId + ", password: " + password);
 		Result<User> userRes = this.getUser(userId, password);
         if(!userRes.isOK()){
             return Result.error(userRes.error());
         }
+		initializeContentClient();
 		contentClient.deleteAuthor(userId, password);
+
+		initializeImagesClient();
+		String[] split = userRes.value().getAvatarUrl().split("/");
+		String avatarId = split[split.length - 1];
+		imageClient.deleteImage(userId, avatarId, password);
+		
         User user = userRes.value();
 		try {
 			hibernate.delete(user);
@@ -113,8 +131,6 @@ public class JavaUsers implements Users{
 			e.printStackTrace();
 			throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
 		}
-        //Ainda precisa de comunicar com o content e o images para remover imagens e authorId's, quando estiverem tratados os
-        //clientes desses dois serviços, trata-se disso
 		return Result.ok(user);
     }
 

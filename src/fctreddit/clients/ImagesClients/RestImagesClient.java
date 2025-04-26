@@ -61,10 +61,8 @@ public class RestImagesClient {
         if(r == null) {
             return Result.error(ErrorCode.TIMEOUT);
         }
-        ///aqui é possivel dar erro, talvez em vez de ok devia ser no_content idk
         int status = r.getStatus();
-        if(status != Status.OK.getStatusCode()) {
-			Log.info("AAAAAA :: Error deleting image: " + status);
+        if(status != Status.NO_CONTENT.getStatusCode()) {
 			return Result.error( getErrorCodeFrom(status));
 		}
         return Result.ok();
