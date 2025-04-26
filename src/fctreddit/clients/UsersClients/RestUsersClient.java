@@ -10,8 +10,6 @@ import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.api.rest.RestUsers;
-import fctreddit.server.Discovery;
-import fctreddit.server.rest.UsersServer;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -24,7 +22,6 @@ import jakarta.ws.rs.core.Response.Status;
 
 public class RestUsersClient extends UsersClient {
 	private static final Logger Log = Logger.getLogger(RestUsersClient.class.getName());
-	private static Discovery discovery;
 
     private static final int READ_TIMEOUT = 5000;
 	private static final int CONNECT_TIMEOUT = 5000;
@@ -32,22 +29,14 @@ public class RestUsersClient extends UsersClient {
 	private final int MAX_RETRIES = 10;
 	private static final int RETRY_SLEEP = 5000;
 	
-	final URI serverURI;
+	//final URI serverURI;
 	final Client client;
 	final ClientConfig config;
 
 	final WebTarget target;
 	
-	public RestUsersClient() {
-		try{
-			discovery = new Discovery(Discovery.DISCOVERY_ADDR);
-			discovery.start();
-
-			this.serverURI = discovery.knownUrisOf(UsersServer.SERVICE, 1)[0];
-		}catch( Exception e) {
-			Log.info( "Failed to retrieve Users Server URI.");
-			throw new RuntimeException(e);
-		}
+	public RestUsersClient(URI serverURI) {
+		
 			this.config = new ClientConfig();
 			
 			config.property( ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
@@ -76,6 +65,7 @@ public class RestUsersClient extends UsersClient {
 	}*/
 
 	//get
+	@Override
 	public Result<User> getUser(String userId, String pwd) {
 		Response r = executeOperationGet(target.path(userId)
 			.queryParam(RestUsers.PASSWORD, pwd).request()

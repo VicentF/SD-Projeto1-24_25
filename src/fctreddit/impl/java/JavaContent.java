@@ -11,13 +11,15 @@ import fctreddit.api.User;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
 import fctreddit.clients.ImagesClients.RestImagesClient;
-import fctreddit.clients.UsersClients.RestUsersClient;
+import fctreddit.clients.UsersClients.UsersClient;
+import fctreddit.clients.UsersClients.UsersClientFactory;
 import fctreddit.impl.Vote;
 import fctreddit.impl.persistence.Hibernate;
 
 public class JavaContent implements  Content{
     private final Hibernate hibernate;
-    private final static RestUsersClient usersClient = new RestUsersClient();
+    private static UsersClient usersClient = null;
+    private static final UsersClientFactory usersClientFactory = new UsersClientFactory();
     private final static RestImagesClient imagesClient = new RestImagesClient();
     private final static Logger Log = Logger.getLogger(JavaContent.class.getName());
     private final String serverUri;
@@ -32,6 +34,7 @@ public class JavaContent implements  Content{
     public Result<String> createPost(Post post, String userPassword){
         post.setCreationTimestamp(System.currentTimeMillis());
         post.setPostId(UUID.randomUUID().toString());
+        initializeUsersClient();
         Result<User> resUser = usersClient.getUser(post.getAuthorId(), userPassword);
         if (!resUser.isOK()) {
             //Log.info("JavaContent :: User not found");
@@ -154,6 +157,7 @@ public class JavaContent implements  Content{
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
         Post oldPost = resPost.value();
+        initializeUsersClient();
         Result<User> resUser = usersClient.getUser(oldPost.getAuthorId(), userPassword);
         if (!resUser.isOK()) {
             Log.info("JavaContent :: Trouble getting user");
@@ -226,6 +230,7 @@ public class JavaContent implements  Content{
             }
         } else {    
             String authorId = post.getAuthorId();
+            initializeUsersClient();
             Result<User> resUser = usersClient.getUser(authorId, userPassword);
             if (!resUser.isOK()) {
                 return Result.error(resUser.error());
@@ -237,6 +242,7 @@ public class JavaContent implements  Content{
 
     //Metodo para evitir repetir código
     private Result<Vote> checkVote(String userId, String postId, String userPassword, Result<Post> resPost) {
+        initializeUsersClient();
         Result<User> resUser = usersClient.getUser(userId, userPassword);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
@@ -411,6 +417,7 @@ public class JavaContent implements  Content{
     @Override
     public Result<Void> deleteAuthor(String userId, String userPassword) {
         Log.info("JavaContent :: Delete Author");
+        initializeUsersClient();
         Result<User> resUser = usersClient.getUser(userId, userPassword);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
@@ -473,6 +480,12 @@ public class JavaContent implements  Content{
             }
         }
         return Result.ok();
+    }
+
+    private static void initializeUsersClient() {
+        if (usersClient == null) {
+            usersClient = usersClientFactory.createClient();
+        }
     }
     
 }

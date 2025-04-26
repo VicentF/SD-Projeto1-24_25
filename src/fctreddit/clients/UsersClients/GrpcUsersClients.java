@@ -27,7 +27,7 @@ public class GrpcUsersClients extends UsersClient{
         stub = UsersGrpc.newBlockingStub( channel );
     }
 
-    public Result<String> createUser(User user) {
+    /*public Result<String> createUser(User user) {
 
         try {
 
@@ -40,7 +40,7 @@ public class GrpcUsersClients extends UsersClient{
             return Result.error( statusToErrorCode(sre.getStatus()));
         }
 
-    }
+    }*/
 
     public Result<User> getUser(String id, String password) {
 
@@ -58,7 +58,7 @@ public class GrpcUsersClients extends UsersClient{
 
     }
 
-    public Result<User> updateUser(String userId, String password, User user) {
+    /*public Result<User> updateUser(String userId, String password, User user) {
 
         try {
 
@@ -108,7 +108,7 @@ public class GrpcUsersClients extends UsersClient{
             return Result.error( statusToErrorCode(sre.getStatus()));
         }
 
-    }
+    }*/
 
     static Result.ErrorCode statusToErrorCode(Status status) {
         return switch(status.getCode()) {

@@ -10,13 +10,15 @@ import java.util.logging.Logger;
 import fctreddit.api.User;
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
-import fctreddit.clients.UsersClients.RestUsersClient;
+import fctreddit.clients.UsersClients.UsersClient;
+import fctreddit.clients.UsersClients.UsersClientFactory;
 
 public class JavaImages implements Image {
 
     private final String baseDir;
 	private static Logger Log = Logger.getLogger(JavaImages.class.getName());
-    private static final RestUsersClient client = new RestUsersClient();
+    private static UsersClient client = null;
+    private static final UsersClientFactory clientFactory = new UsersClientFactory();
 
     public JavaImages(String uri) {
         this.baseDir = uri;
@@ -25,6 +27,7 @@ public class JavaImages implements Image {
     
     @Override
     public Result<String> createImage(String userId, byte[] imageContents, String password) {
+        initializeContentClient();
         Result<User> resUser = client.getUser(userId, password);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
@@ -71,6 +74,7 @@ public class JavaImages implements Image {
         if(password == null){
             return Result.error(Result.ErrorCode.BAD_REQUEST);
         }
+        initializeContentClient();
         Result<User> resUser = client.getUser(userId, password);
         if(!resUser.isOK()){
             return Result.error(resUser.error());
@@ -84,6 +88,12 @@ public class JavaImages implements Image {
             return Result.ok(null);
         } catch (IOException e) {
             return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
+    }
+
+    private static void initializeContentClient() {
+        if (client == null) {
+            client = clientFactory.createClient();
         }
     }
     

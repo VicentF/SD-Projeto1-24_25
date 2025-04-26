@@ -1,28 +1,26 @@
 package fctreddit.server.grpc;
 
+import java.util.logging.Logger;
+
 import com.google.protobuf.ByteString;
+
 import fctreddit.api.java.Image;
 import fctreddit.api.java.Result;
-import fctreddit.api.java.Users;
 import fctreddit.impl.grpc.generated_java.ImageGrpc;
 import fctreddit.impl.grpc.generated_java.ImageProtoBuf;
-import fctreddit.impl.grpc.generated_java.UsersProtoBuf;
-import fctreddit.impl.grpc.util.DataModelAdaptor;
 import fctreddit.impl.java.JavaImages;
-import fctreddit.impl.java.JavaUsers;
 import io.grpc.BindableService;
 import io.grpc.ServerServiceDefinition;
 import io.grpc.stub.StreamObserver;
 
-import java.net.URI;
-
 public class GrpcImageServerStub implements ImageGrpc.AsyncService, BindableService {
 
     String uri;
-    Image impl = new JavaImages(uri);
+    Image impl;
+	private static Logger Log = Logger.getLogger(GrpcImageServerStub.class.getName());
 
     public GrpcImageServerStub(String uri) {
-        this.uri = uri;
+        impl = new JavaImages(uri);
     }
 
     @Override
@@ -33,13 +31,16 @@ public class GrpcImageServerStub implements ImageGrpc.AsyncService, BindableServ
     @Override
     public void createImage(ImageProtoBuf.CreateImageArgs request, StreamObserver<ImageProtoBuf.CreateImageResult> responseObserver) {
 
+        Log.info("ImageStub :: createImage() called");
         Result<String> res = impl.createImage(
                 request.getUserId(),
                 request.getImageContents().toByteArray(),
                 request.getPassword());
 
-        if (!res.isOK())
+        if (!res.isOK()){
+            Log.info("ImageStub :: createImage() failed with error: " + res.error().toString());
             responseObserver.onError(errorCodeToStatus(res.error()));
+        }
         else  {
             responseObserver.onNext( ImageProtoBuf.CreateImageResult.newBuilder()
                     .setImageId( res.value() ).build() );
