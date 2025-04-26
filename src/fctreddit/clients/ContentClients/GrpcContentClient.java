@@ -1,19 +1,21 @@
 package fctreddit.clients.ContentClients;
 
-import fctreddit.api.Post;
-import fctreddit.api.User;
-import fctreddit.api.java.Result;
-import fctreddit.impl.grpc.generated_java.*;
-import fctreddit.impl.grpc.util.DataModelAdaptor;
-import io.grpc.*;
-import io.grpc.internal.PickFirstLoadBalancerProvider;
-
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-public class GrpcContentClient extends ContentClients {
+import fctreddit.api.Post;
+import fctreddit.api.java.Result;
+import fctreddit.impl.grpc.generated_java.ContentGrpc;
+import fctreddit.impl.grpc.generated_java.ContentProtoBuf;
+import fctreddit.impl.grpc.util.DataModelAdaptor;
+import io.grpc.Channel;
+import io.grpc.LoadBalancerRegistry;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.grpc.internal.PickFirstLoadBalancerProvider;
+
+public class GrpcContentClient extends ContentClient {
 
     static {
         LoadBalancerRegistry.getDefaultRegistry().register(new PickFirstLoadBalancerProvider());
