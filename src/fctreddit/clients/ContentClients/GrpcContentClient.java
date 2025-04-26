@@ -29,7 +29,20 @@ public class GrpcContentClient extends ContentClient {
         stub = ContentGrpc.newBlockingStub(channel);
     }
 
-    public Result<String> createPost(Post post, String password) {
+    @Override
+    public Result<Void> deleteAuthor(String userId, String userPassword) {
+        try {
+            ContentProtoBuf.EmptyMessage res = stub.deleteAuthor(ContentProtoBuf.DeleteAuthorArgs.newBuilder()
+                    .setUserId(userId)
+                    .setPassword(userPassword)
+                    .build());
+            return Result.ok(null);
+        } catch (StatusRuntimeException sre) {
+            return Result.error(statusToErrorCode(sre.getStatus()));
+        }
+    }
+
+    /*public Result<String> createPost(Post post, String password) {
 
         try {
 
@@ -45,7 +58,7 @@ public class GrpcContentClient extends ContentClient {
 
     }
 
-    public Result<List<String>> getPosts(Integer timestamp, String sortOrder) {
+    /*public Result<List<String>> getPosts(Integer timestamp, String sortOrder) {
         try{
 
             ContentProtoBuf.GetPostsResult res = stub.getPosts(ContentProtoBuf.GetPostsArgs.newBuilder()
@@ -216,7 +229,7 @@ public class GrpcContentClient extends ContentClient {
             return Result.error( statusToErrorCode(sre.getStatus()));
         }
 
-    }
+    }*/
 
 
     static Result.ErrorCode statusToErrorCode(Status status) {

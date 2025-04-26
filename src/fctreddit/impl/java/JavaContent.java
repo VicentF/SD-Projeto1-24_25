@@ -78,12 +78,12 @@ public class JavaContent implements  Content{
         } else {
             switch(sortOrder){
                 case MOST_UP_VOTES:
-                    query += " ORDER BY p.upVote DESC, p.creationTimestamp ASC";
+                    query += " ORDER BY p.upVote DESC";
                     sortedKeys = hibernate.jpql(query, String.class);
                     break;
                 case MOST_REPLIES:
                     String halfParentUrl = serverUri + "/posts/";
-                    query += " ORDER BY ( SELECT COUNT(c) FROM Post c WHERE c.parentUrl = CONCAT('" + halfParentUrl + "', p.postId)) DESC, p.creationTimestamp ASC";
+                    query += " ORDER BY ( SELECT COUNT(c) FROM Post c WHERE c.parentUrl = CONCAT('" + halfParentUrl + "', p.postId)) DESC";
                     sortedKeys = hibernate.jpql(query, String.class);
                     break;
                 default:

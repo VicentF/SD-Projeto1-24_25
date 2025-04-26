@@ -1,17 +1,7 @@
 package fctreddit.clients.ContentClients;
 
-public class ContentClient {
+import fctreddit.api.java.Result;
 
-
-    /*public UsersClient() {
-        //alguma cena do género "se o uri acabar com rest lança um RestUsersClient, se acabar com grpc lança um GrpcUsersClient"
-        if(URI == "rest"){
-            return new RestUsersClient();
-      }
-
-      No fundo a mesma lógica do UsersClient
-    }*/
-
-
-
+public abstract class ContentClient {
+    public abstract Result<Void> deleteAuthor(String userId, String userPassword);
 }

@@ -6,7 +6,8 @@ import fctreddit.api.User;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.api.java.Users;
-import fctreddit.clients.ContentClients.RestContentClient;
+import fctreddit.clients.ContentClients.ContentClient;
+import fctreddit.clients.ContentClients.ContentClientFactory;
 import fctreddit.clients.ImagesClients.RestImagesClient;
 import fctreddit.impl.persistence.Hibernate;
 import jakarta.inject.Singleton;
@@ -18,7 +19,8 @@ public class JavaUsers implements Users{
 
     private final Hibernate hibernate;
 	private static Logger Log = Logger.getLogger(JavaUsers.class.getName());
-	private static RestContentClient contentClient = null;
+	private static ContentClient contentClient = null;
+	private static ContentClientFactory contentClientFactory = new ContentClientFactory();
 	private static RestImagesClient imageClient = null;
 
     public JavaUsers() {
@@ -99,7 +101,7 @@ public class JavaUsers implements Users{
 
 	private static void initializeContentClient() {
 		if (contentClient == null) {
-			contentClient = new RestContentClient();
+			contentClient = contentClientFactory.createClient();
 		}
 	}
 

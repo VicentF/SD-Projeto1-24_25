@@ -28,6 +28,8 @@ service Content {
 	rpc getUpVotes ( GetPostArgs ) returns ( VoteCountResult ) {}
 	
 	rpc getDownVotes ( GetPostArgs ) returns ( VoteCountResult ) {}
+
+	rpc deleteAuthor ( DeleteAuthorArgs ) returns ( EmptyMessage ) {}
 }
 
 message GrpcPost {
@@ -83,6 +85,11 @@ message ChangeVoteArgs {
 	string postId = 1;
 	string userId = 2;
 	optional string password = 3;
+}
+
+message DeleteAuthorArgs{
+	string userId = 1;
+	optional string password = 2;
 }
 
 message EmptyMessage {
