@@ -1,12 +1,12 @@
 package fctreddit.server.grpc;
 
+import java.net.InetAddress;
+import java.util.logging.Logger;
+
 import io.grpc.Grpc;
 import io.grpc.InsecureServerCredentials;
 import io.grpc.Server;
 import io.grpc.ServerCredentials;
-
-import java.net.InetAddress;
-import java.util.logging.Logger;
 
 public class ContentServer {
 
@@ -27,4 +27,5 @@ public class ContentServer {
         Log.info( String.format("Users gRPC Server ready @ %s\n", serverURI) );
         server.start().awaitTermination();
 
+    }
 }

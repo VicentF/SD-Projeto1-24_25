@@ -1,6 +1,6 @@
 package fctreddit.clients.ContentClients;
 
-public class ContentClients {
+public class ContentClient {
 
 
     /*public UsersClient() {
