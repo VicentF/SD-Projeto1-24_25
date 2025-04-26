@@ -28,19 +28,73 @@ public class GrpcUsersClients extends UsersClient{
     }
 
     public Result<String> createUser(User user) {
+
         try {
+
             UsersProtoBuf.CreateUserResult res = stub.createUser(UsersProtoBuf.CreateUserArgs.newBuilder()
                     .setUser(DataModelAdaptor.User_to_GrpcUser(user))
                     .build());
-
             return Result.ok(res.getUserId());
+
         } catch (StatusRuntimeException sre) {
             return Result.error( statusToErrorCode(sre.getStatus()));
         }
+
+    }
+
+    public Result<User> getUser(String id, String password) {
+
+        try {
+
+            UsersProtoBuf.GetUserResult res = stub.getUser(UsersProtoBuf.GetUserArgs.newBuilder()
+                    .setUserId(id)
+                    .setPassword(password)
+                    .build());
+            return Result.ok(DataModelAdaptor.GrpcUser_to_User(res.getUser()));
+
+        } catch (StatusRuntimeException sre) {
+            return Result.error( statusToErrorCode(sre.getStatus()));
+        }
+
+    }
+
+    public Result<User> updateUser(String userId, String password, User user) {
+
+        try {
+
+            UsersProtoBuf.UpdateUserResult res = stub.updateUser(UsersProtoBuf.UpdateUserArgs.newBuilder()
+                    .setUserId(userId)
+                    .setPassword(password)
+                    .setUser(DataModelAdaptor.User_to_GrpcUser(user))
+                    .build());
+            return  Result.ok(DataModelAdaptor.GrpcUser_to_User(res.getUser()));
+
+        } catch (StatusRuntimeException sre) {
+            return Result.error( statusToErrorCode(sre.getStatus()));
+        }
+
+    }
+
+    public Result<User> deleteUser(String userId, String password) {
+
+        try {
+
+            UsersProtoBuf.DeleteUserResult res = stub.deleteUser(UsersProtoBuf.DeleteUserArgs.newBuilder()
+                    .setUserId(userId)
+                    .setPassword(password)
+                    .build());
+            return  Result.ok(DataModelAdaptor.GrpcUser_to_User(res.getUser()));
+
+        } catch (StatusRuntimeException sre) {
+            return Result.error( statusToErrorCode(sre.getStatus()));
+        }
+
     }
 
     public Result<List<User>> searchUsers(String pattern) {
+
         try{
+
             Iterator<UsersProtoBuf.GrpcUser> res = stub.searchUsers(UsersProtoBuf.SearchUserArgs.newBuilder()
                     .setPattern(pattern)
                     .build());
@@ -49,9 +103,11 @@ public class GrpcUsersClients extends UsersClient{
                 ret.add(DataModelAdaptor.GrpcUser_to_User(res.next()));
             }
             return Result.ok(ret);
+
         } catch (StatusRuntimeException sre) {
             return Result.error( statusToErrorCode(sre.getStatus()));
         }
+
     }
 
     static Result.ErrorCode statusToErrorCode(Status status) {

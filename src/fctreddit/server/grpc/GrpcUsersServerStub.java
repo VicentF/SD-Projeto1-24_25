@@ -39,28 +39,49 @@ public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableServ
 
     @Override
     public void getUser(UsersProtoBuf.GetUserArgs request, StreamObserver<UsersProtoBuf.GetUserResult> responseObserver) {
-        /**
-        Result<User> res = impl.getUser(
-                DataModelAdaptor.GrpcUser_to_User(request.getUserId()),
-                DataModelAdaptor.GrpcUser_to_User(request.getPassword()));
+
+        Result<User> res = impl.getUser( request.getUserId() , request.getPassword() );
         if ( !res.isOK() )
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-
+            responseObserver.onNext(UsersProtoBuf.GetUserResult.newBuilder()
+                    .setUser( DataModelAdaptor.User_to_GrpcUser(res.value() ) ).build());
             responseObserver.onCompleted();
         }
-         **/
 
     }
 
     @Override
     public void updateUser(UsersProtoBuf.UpdateUserArgs request, StreamObserver<UsersProtoBuf.UpdateUserResult> responseObserver) {
-        UsersGrpc.AsyncService.super.updateUser(request, responseObserver);
+
+        Result<User> res = impl.updateUser(
+                request.getUserId(),
+                request.getPassword(),
+                DataModelAdaptor.GrpcUser_to_User(request.getUser()));
+
+        if ( !res.isOK() )
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(UsersProtoBuf.UpdateUserResult.newBuilder()
+                    .setUser( DataModelAdaptor.User_to_GrpcUser(res.value() ) ).build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
     public void deleteUser(UsersProtoBuf.DeleteUserArgs request, StreamObserver<UsersProtoBuf.DeleteUserResult> responseObserver) {
-        UsersGrpc.AsyncService.super.deleteUser(request, responseObserver);
+
+        Result<User> res = impl.deleteUser(
+                request.getUserId(),
+                request.getPassword());
+
+        if ( !res.isOK() )
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext(UsersProtoBuf.DeleteUserResult.newBuilder()
+                    .setUser( DataModelAdaptor.User_to_GrpcUser(res.value()) ).build());
+            responseObserver.onCompleted();
+        }
     }
 
     @Override
