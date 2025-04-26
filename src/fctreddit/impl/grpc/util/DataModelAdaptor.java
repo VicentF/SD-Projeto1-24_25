@@ -1,6 +1,9 @@
 package fctreddit.impl.grpc.util;
 
 import fctreddit.api.User;
+import fctreddit.api.java.Image;
+import fctreddit.impl.grpc.generated_java.ImageGrpc;
+import fctreddit.impl.grpc.generated_java.ImageProtoBuf;
 import fctreddit.impl.grpc.generated_java.UsersProtoBuf;
 
 public class DataModelAdaptor {
@@ -22,4 +25,5 @@ public class DataModelAdaptor {
 
         return b.build();
     }
+
 }

@@ -26,7 +26,7 @@ public class GrpcUsersServerStub implements UsersGrpc.AsyncService, BindableServ
     @Override
     public void createUser(UsersProtoBuf.CreateUserArgs request, StreamObserver<UsersProtoBuf.CreateUserResult> responseObserver) {
 
-        Result<String> res = impl.createUser(DataModelAdaptor.GrpcUser_to_User(request.getUser()));
+        Result<String> res = impl.createUser(  DataModelAdaptor.GrpcUser_to_User(request.getUser() ) );
 
         if (!res.isOK())
                 responseObserver.onError(errorCodeToStatus(res.error()));
