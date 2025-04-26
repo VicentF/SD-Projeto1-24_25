@@ -392,7 +392,6 @@ public class JavaContent implements  Content{
     public Result<Integer> getupVotes(String postId) {
         Result<Post> resPost = getPost(postId);
         if(!resPost.isOK()){
-            Log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             return Result.error(resPost.error());
         }
         int upVotes = resPost.value().getUpVote();
@@ -403,7 +402,6 @@ public class JavaContent implements  Content{
     public Result<Integer> getDownVotes(String postId) {
         Result<Post> resPost = getPost(postId);
         if(!resPost.isOK()){
-            Log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             return Result.error(resPost.error());
         }
         int downVotes = resPost.value().getDownVote();

@@ -18,7 +18,6 @@ public class UsersResource implements RestUsers {
 	final Users impl;
 	
 	public UsersResource() {
-		Log.info("UsersResource constructor called");
 		impl = new JavaUsers();
 	}
 
