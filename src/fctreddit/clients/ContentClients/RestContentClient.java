@@ -9,8 +9,6 @@ import org.glassfish.jersey.client.ClientProperties;
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
 import fctreddit.api.rest.RestContent;
-import fctreddit.server.Discovery;
-import fctreddit.server.rest.ContentServer;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -19,32 +17,23 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-public class RestContentClient {
+public class RestContentClient	extends ContentClient {
     private static final Logger Log = Logger.getLogger(RestContentClient.class.getName());
-	private static Discovery discovery;
 
     private static final int READ_TIMEOUT = 5000;
 	private static final int CONNECT_TIMEOUT = 5000;
 
 	private final int MAX_RETRIES = 10;
 	private static final int RETRY_SLEEP = 5000;
-	
-	final URI serverURI;
+
+	private final URI serverURI;
+
 	final Client client;
 	final ClientConfig config;
 
 	final WebTarget target;
 	
-	public RestContentClient() {
-		try{
-			discovery = new Discovery(Discovery.DISCOVERY_ADDR);
-			discovery.start();
-
-			this.serverURI = discovery.knownUrisOf(ContentServer.SERVICE, 1)[0];
-		}catch( Exception e) {
-			Log.info( "Failed to retrieve Content Server URI.");
-			throw new RuntimeException(e);
-		}
+	public RestContentClient(URI serverURI) {
 			this.config = new ClientConfig();
 			
 			config.property( ClientProperties.READ_TIMEOUT, READ_TIMEOUT);
@@ -54,6 +43,8 @@ public class RestContentClient {
 			this.client = ClientBuilder.newClient(config);
 
 			target = client.target( serverURI ).path( RestContent.PATH );
+
+			this.serverURI = serverURI;
 	}
 
     public Result<Void> deleteAuthor(String userId, String userPassword) {

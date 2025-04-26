@@ -18,7 +18,7 @@ public class JavaImages implements Image {
     private final String baseDir;
 	private static Logger Log = Logger.getLogger(JavaImages.class.getName());
     private static UsersClient client = null;
-    private static final UsersClientFactory clientFactory = new UsersClientFactory();
+    private static final UsersClientFactory userClientFactory = new UsersClientFactory();
 
     public JavaImages(String uri) {
         this.baseDir = uri;
@@ -93,7 +93,7 @@ public class JavaImages implements Image {
 
     private static void initializeContentClient() {
         if (client == null) {
-            client = clientFactory.createClient();
+            client = userClientFactory.createClient();
         }
     }
     
