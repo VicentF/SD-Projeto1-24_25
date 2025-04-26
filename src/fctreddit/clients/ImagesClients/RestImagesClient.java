@@ -19,7 +19,7 @@ import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-public class RestImagesClient {
+public class RestImagesClient extends ImagesClient {
     private static final Logger Log = Logger.getLogger(RestImagesClient.class.getName());
     private static Discovery discovery;
 
@@ -28,23 +28,14 @@ public class RestImagesClient {
 
 	private final int MAX_RETRIES = 10;
 	private static final int RETRY_SLEEP = 5000;
-	
-	final URI serverURI;
+
 	final Client client;
 	final ClientConfig config;
 
 	final WebTarget target;
 	
-	public RestImagesClient() {
-		try{
-			discovery = new Discovery(Discovery.DISCOVERY_ADDR);
-			discovery.start();
+	public RestImagesClient(URI serverURI) {
 
-			this.serverURI = discovery.knownUrisOf(ImageServer.SERVICE, 1)[0];
-		}catch( Exception e) {
-			Log.info( "Failed to retrieve Images Server URI.");
-			throw new RuntimeException(e);
-		}
 			this.config = new ClientConfig();
 			
 			config.property( ClientProperties.READ_TIMEOUT, READ_TIMEOUT);

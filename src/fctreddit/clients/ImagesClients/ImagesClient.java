@@ -1,14 +1,10 @@
 package fctreddit.clients.ImagesClients;
 
-public class ImagesClient {
+import com.google.protobuf.ByteString;
+import fctreddit.api.java.Result;
 
+public abstract class ImagesClient {
 
-    /*public UsersClient() {
-        //alguma cena do género "se o uri acabar com rest lança um RestUsersClient, se acabar com grpc lança um GrpcUsersClient"
-        if(URI == "rest"){
-            return new RestUsersClient();
-      }
+    public abstract Result<Void> deleteImage(String userId, String imageId, String password);
 
-      No fundo a mesma lógica do UsersClient
-    }*/
 }

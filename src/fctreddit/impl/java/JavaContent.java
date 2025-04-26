@@ -10,6 +10,8 @@ import fctreddit.api.Post;
 import fctreddit.api.User;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
+import fctreddit.clients.ImagesClients.ImagesClient;
+import fctreddit.clients.ImagesClients.ImagesClientFactory;
 import fctreddit.clients.ImagesClients.RestImagesClient;
 import fctreddit.clients.UsersClients.UsersClient;
 import fctreddit.clients.UsersClients.UsersClientFactory;
@@ -19,8 +21,9 @@ import fctreddit.impl.persistence.Hibernate;
 public class JavaContent implements  Content{
     private final Hibernate hibernate;
     private static UsersClient usersClient = null;
+    private static ImagesClient imageClient = null;
     private static final UsersClientFactory usersClientFactory = new UsersClientFactory();
-    private final static RestImagesClient imagesClient = new RestImagesClient();
+    private final static ImagesClientFactory imagesClientFactory = new ImagesClientFactory();
     private final static Logger Log = Logger.getLogger(JavaContent.class.getName());
     private final String serverUri;
     private final Map<String, Object> postLocks = new ConcurrentHashMap<>();
@@ -222,7 +225,8 @@ public class JavaContent implements  Content{
             Log.info("Checkpoint1");
             String[] split = mediaUrl.split("/");
             String imageId = split[split.length - 1];
-            Result<Void> resImage = imagesClient.deleteImage(post.getAuthorId(), imageId, userPassword);
+            initializeImagesClient();
+            Result<Void> resImage = imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
             Log.info("Checkpoint2");
             if(!resImage.isOK()){
                 Log.info("Checkpoint3");
@@ -485,6 +489,13 @@ public class JavaContent implements  Content{
     private static void initializeUsersClient() {
         if (usersClient == null) {
             usersClient = usersClientFactory.createClient();
+        }
+    }
+
+    private static void initializeImagesClient() {
+        if (imageClient == null) {
+            imageClient = imagesClientFactory.createClient();
+
         }
     }
     

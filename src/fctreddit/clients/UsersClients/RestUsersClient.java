@@ -48,22 +48,6 @@ public class RestUsersClient extends UsersClient {
 			target = client.target( serverURI ).path( RestUsers.PATH );
 	}
 
-	//post
-	/*public Result<String> createUser(User user) {
-		Response r = executeOperationPost( target.request()
-				.accept(MediaType.APPLICATION_JSON), Entity.json(user) );
-		if(r == null) {
-			return Result.error(ErrorCode.TIMEOUT);
-		}
-		int status = r.getStatus();
-		if(status != Status.OK.getStatusCode()) {
-			return Result.error( getErrorCodeFrom(status));
-		}
-		else {
-			return Result.ok(r.readEntity(String.class));
-		}
-	}*/
-
 	//get
 	@Override
 	public Result<User> getUser(String userId, String pwd) {
@@ -81,74 +65,6 @@ public class RestUsersClient extends UsersClient {
 			return Result.ok(r.readEntity(User.class));
 		}
 	}
-	
-	
-	//put
-	/*public Result<User> updateUser(String userId, String password, User user) {
-		Response r = executeOperationPut(target.path(userId)
-			.queryParam(RestUsers.PASSWORD, password).request().accept(MediaType.APPLICATION_JSON), Entity.json(user));
-		if(r == null) {
-			return Result.error(ErrorCode.TIMEOUT);
-		}
-		int status = r.getStatus();
-		if(status != Status.OK.getStatusCode()) {
-			return Result.error( getErrorCodeFrom(status));
-		}
-		else {
-			return Result.ok(r.readEntity(User.class));
-		}
-	}*/
-
-	//delete
-	/*public Result<User> deleteUser(String userId, String password) {
-		Response r = executeOperationDelete(target.path(userId)
-			.queryParam(RestUsers.PASSWORD, password).request()
-			.accept(MediaType.APPLICATION_JSON));
-		if(r == null) {
-			return Result.error(ErrorCode.TIMEOUT);
-		}
-		int status = r.getStatus();
-		if(status != Status.OK.getStatusCode()) {
-			return Result.error( getErrorCodeFrom(status));
-		}
-		else {
-			return Result.ok(r.readEntity(User.class));
-		}
-	}*/
-
-	//get
-	/*public Result<List<User>> searchUsers(String pattern) {
-		Response r = executeOperationGet(target.queryParam(RestUsers.QUERY, pattern).request()
-			.accept(MediaType.APPLICATION_JSON));
-		if(r == null) {
-			return Result.error(ErrorCode.TIMEOUT);
-		}
-		int status = r.getStatus();
-		if(status != Status.OK.getStatusCode()) {
-			return Result.error( getErrorCodeFrom(status));
-		}
-		else {
-			return Result.ok(r.readEntity(new GenericType<List<User>>() {}));
-		}
-	}*/
-
-	/*private Response executeOperationPost(Builder req, Entity<?> e){
-		for(int i = 0; i < MAX_RETRIES; i++){
-			try {
-				return req.post(e);
-			} catch (ProcessingException x) {
-				Log.info(x.getMessage());
-				try {
-					Thread.sleep(RETRY_SLEEP);
-				} catch (InterruptedException y) {
-					//Nothing to be done here.
-				}
-			} catch (Exception x) {
-				x.printStackTrace();
-			}
-		}
-		return null;
-	}*/
 
 	private Response executeOperationGet(Builder req){
 		for(int i = 0; i < MAX_RETRIES; i++){
@@ -167,43 +83,6 @@ public class RestUsersClient extends UsersClient {
 		}
 		return null;
 	}
-
-	/*private Response executeOperationPut(Builder req, Entity<?> e){
-		for(int i = 0; i < MAX_RETRIES; i++){
-			try{
-				return req.put(e);
-			} catch (ProcessingException x){
-				Log.info(x.getMessage());
-				try {
-					Thread.sleep(RETRY_SLEEP);
-				} catch (InterruptedException y) {
-					//Nothing to be done here.
-				}
-			} catch (Exception y) {
-				y.printStackTrace();
-			}
-		}
-		return null;
-	}
-
-	private Response executeOperationDelete(Builder req){
-		for(int i = 0; i < MAX_RETRIES; i++){
-			try{
-				return req.delete();
-			} catch (ProcessingException x){
-				Log.info(x.getMessage());
-				try {
-					Thread.sleep(RETRY_SLEEP);
-				} catch (InterruptedException y) {
-					//Nothing to be done here.
-				}
-			} catch (Exception y) {
-				y.printStackTrace();
-			}
-		}
-		return null;
-	}*/
-
 	//era fixe meter isto tudo numa data class kinda maybe?
 	public static ErrorCode getErrorCodeFrom(int status) {
 		return switch (status) {

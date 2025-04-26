@@ -24,48 +24,6 @@ public class GrpcImagesClient extends ImagesClient{
         stub = ImageGrpc.newBlockingStub(channel);
     }
 
-    public Result<String> createImage(String userId, ByteString imageContents, String password) {
-        try {
-
-            ImageProtoBuf.CreateImageResult res = stub.createImage(ImageProtoBuf.CreateImageArgs.newBuilder()
-                    .setUserId(userId)
-                    .setImageContents(imageContents)
-                    .setPassword(password)
-                    .build());
-            return  Result.ok(res.getImageId());
-
-        }
-        catch (StatusRuntimeException sre) {
-            return Result.error( statusToErrorCode(sre.getStatus()) );
-
-        }
-    }
-
-    public Result<byte[]> getImage(String userId, String imageId) {
-        try {
-
-            Iterator<ImageProtoBuf.GetImageResult> it = stub.getImage(
-                    ImageProtoBuf.GetImageArgs.newBuilder()
-                            .setUserId(userId)
-                            .setImageId(imageId)
-                            .build()
-            );
-
-            if (it.hasNext()) {
-                ImageProtoBuf.GetImageResult res = it.next();
-                return Result.ok(res.getData().toByteArray());
-            }
-            else {
-                return Result.error( statusToErrorCode(Status.NOT_FOUND) );
-            }
-
-        }
-        catch (StatusRuntimeException sre) {
-            return Result.error( statusToErrorCode(sre.getStatus()) );
-
-        }
-    }
-
     public Result<Void> deleteImage(String userId, String imageId, String password) {
         try {
 
