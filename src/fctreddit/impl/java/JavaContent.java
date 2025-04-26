@@ -10,6 +10,7 @@ import fctreddit.api.Post;
 import fctreddit.api.User;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
+import fctreddit.clients.ImagesClients.RestImagesClient;
 import fctreddit.clients.UsersClients.RestUsersClient;
 import fctreddit.impl.Vote;
 import fctreddit.impl.persistence.Hibernate;
@@ -17,6 +18,7 @@ import fctreddit.impl.persistence.Hibernate;
 public class JavaContent implements  Content{
     private final Hibernate hibernate;
     private final static RestUsersClient usersClient = new RestUsersClient();
+    private final static RestImagesClient imagesClient = new RestImagesClient();
     private final static Logger Log = Logger.getLogger(JavaContent.class.getName());
     private final String serverUri;
     private final Map<String, Object> postLocks = new ConcurrentHashMap<>();
@@ -142,7 +144,21 @@ public class JavaContent implements  Content{
         if(!resPost.isOK()){
             return Result.error(resPost.error());
         }
+        String parentUrl = serverUri + "/posts/" + postId;
+        List<Post> replies = hibernate.jpql("SELECT p FROM Post p WHERE p.parentUrl = '" + parentUrl + "'", Post.class);
+        if(!replies.isEmpty()){
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
+        List<Vote> votes = hibernate.jpql("SELECT v FROM Vote v WHERE v.postId = '" + postId + "'", Vote.class);
+        if(!votes.isEmpty()){
+            return Result.error(Result.ErrorCode.BAD_REQUEST);
+        }
         Post oldPost = resPost.value();
+        Result<User> resUser = usersClient.getUser(oldPost.getAuthorId(), userPassword);
+        if (!resUser.isOK()) {
+            Log.info("JavaContent :: Trouble getting user");
+            return Result.error(resUser.error());
+        }
         if(post.getContent() != null){
             oldPost.setContent(post.getContent());
         }
@@ -150,7 +166,13 @@ public class JavaContent implements  Content{
             oldPost.setMediaUrl(post.getMediaUrl());
         }
         //checkar se é suposto lançar erro quando se tenta updatar algo que não se deve
-        hibernate.update(oldPost);
+        try{
+            hibernate.update(oldPost);
+        } catch (Exception e) {
+            Log.info("JavaContent :: Internal error updating post");
+            e.printStackTrace();
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
         return Result.ok(oldPost);
     }
 
@@ -170,6 +192,17 @@ public class JavaContent implements  Content{
         for(Post p : postsToUpdate){
             deletePost(p);
         }
+        List<Vote> votesToUpdate = hibernate.jpql("SELECT v FROM Vote v WHERE v.postId = '" + postId + "'", Vote.class);
+        for(Vote v : votesToUpdate){
+            try {
+                hibernate.delete(v);
+            } catch (Exception e) {
+                Log.info("JavaContent :: Internal error deleting vote");
+                e.printStackTrace();
+                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+            }
+        }
+        
         return Result.ok();
     }
 
@@ -180,10 +213,23 @@ public class JavaContent implements  Content{
             return Result.error(resPost.error());
         }
         Post post = resPost.value();
-        String authorId = post.getAuthorId();
-        Result<User> resUser = usersClient.getUser(authorId, userPassword);
-        if (!resUser.isOK()) {
-            return Result.error(resUser.error());
+        String mediaUrl = post.getMediaUrl();
+        if(mediaUrl != null){
+            Log.info("Checkpoint1");
+            String[] split = mediaUrl.split("/");
+            String imageId = split[split.length - 1];
+            Result<Void> resImage = imagesClient.deleteImage(post.getAuthorId(), imageId, userPassword);
+            Log.info("Checkpoint2");
+            if(!resImage.isOK()){
+                Log.info("Checkpoint3");
+                return Result.error(resImage.error());
+            }
+        } else {    
+            String authorId = post.getAuthorId();
+            Result<User> resUser = usersClient.getUser(authorId, userPassword);
+            if (!resUser.isOK()) {
+                return Result.error(resUser.error());
+            }
         }
         deletePost(post);
         return Result.ok();
