@@ -19,15 +19,15 @@ public class DataModelAdaptor {
                 from.getPassword());
     }
 
+
     public static UsersProtoBuf.GrpcUser User_to_GrpcUser(User from) {
-        UsersProtoBuf.GrpcUser.Builder b = UsersProtoBuf.GrpcUser.newBuilder()
+        return UsersProtoBuf.GrpcUser.newBuilder()
                 .setUserId(from.getUserId())
                 .setPassword(from.getPassword())
-                .setEmail(from.getEmail())
-                .setFullName(from.getFullName());
-
-        return b.build();
-    }
+                .setEmail(from.getEmail() != null ? from.getEmail() : "")
+                .setFullName(from.getFullName() != null ? from.getFullName() : "")
+                .build();
+        }
 
     public static Post GrpcPost_to_Post(ContentProtoBuf.GrpcPost from) {
         return new Post(
