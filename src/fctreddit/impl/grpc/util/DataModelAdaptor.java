@@ -1,7 +1,10 @@
 package fctreddit.impl.grpc.util;
 
+import fctreddit.api.Post;
 import fctreddit.api.User;
+import fctreddit.api.java.Content;
 import fctreddit.api.java.Image;
+import fctreddit.impl.grpc.generated_java.ContentProtoBuf;
 import fctreddit.impl.grpc.generated_java.ImageGrpc;
 import fctreddit.impl.grpc.generated_java.ImageProtoBuf;
 import fctreddit.impl.grpc.generated_java.UsersProtoBuf;
@@ -23,6 +26,31 @@ public class DataModelAdaptor {
                 .setEmail(from.getEmail())
                 .setFullName(from.getFullName());
 
+        return b.build();
+    }
+
+    public static Post GrpcPost_to_Post(ContentProtoBuf.GrpcPost from) {
+        return new Post(
+                from.getPostId(),
+                from.getAuthorId(),
+                from.getCreationTimestamp(),
+                from.getContent(),
+                from.getMediaUrl(),
+                from.getParentUrl(),
+                from.getUpVote(),
+                from.getDownVote());
+    }
+
+    public static ContentProtoBuf.GrpcPost Post_to_GrpcPost(Post from) {
+        ContentProtoBuf.GrpcPost.Builder b = ContentProtoBuf.GrpcPost.newBuilder()
+                .setPostId(from.getPostId())
+                .setAuthorId(from.getAuthorId())
+                .setCreationTimestamp(from.getCreationTimestamp())
+                .setContent(from.getContent())
+                .setMediaUrl(from.getMediaUrl())
+                .setParentUrl(from.getParentUrl())
+                .setUpVote(from.getUpVote())
+                .setDownVote(from.getDownVote());
         return b.build();
     }
 
