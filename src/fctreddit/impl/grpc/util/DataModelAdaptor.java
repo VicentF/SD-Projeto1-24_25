@@ -14,8 +14,8 @@ public class DataModelAdaptor {
     public static User GrpcUser_to_User(UsersProtoBuf.GrpcUser from) {
         return new User(
                 from.getUserId(),
-                from.getFullName(),
                 from.getEmail(),
+                from.getFullName(),
                 from.getPassword());
     }
 
