@@ -134,6 +134,7 @@ public class ContentResource implements RestContent {
 
     @Override
     public void deleteAuthor(String userId, String userPassword) {
+        Log.info("Content Resource :: Delete Author HEEEEELP");
         Result<Void> res = impl.deleteAuthor(userId, userPassword);
         if(!res.isOK()) {
             throw new WebApplicationException(errorCodeToStatus(res.error()));

@@ -12,7 +12,7 @@ import fctreddit.server.Discovery;
 
 public class ContentServer {
 
-	private static Logger Log = Logger.getLogger(UsersServer.class.getName());
+	private static Logger Log = Logger.getLogger(ContentServer.class.getName());
 	private static Discovery discovery;
 
 	static {

@@ -366,13 +366,14 @@ public class JavaContent implements  Content{
 
     @Override
     public Result<Void> deleteAuthor(String userId, String userPassword) {
+        Log.info("JavaContent :: Delete Author");
         Result<User> resUser = usersClient.getUser(userId, userPassword);
         if (!resUser.isOK()) {
             return Result.error(resUser.error());
         }
         List<Post> postsToUpdate;
         try{
-            postsToUpdate = hibernate.jpql("SELECT FROM Post p WHERE p.authorId = '" + userId + "'", Post.class);
+            postsToUpdate = hibernate.jpql("SELECT p FROM Post p WHERE p.authorId = '" + userId + "'", Post.class);
         } catch (Exception e) {
             Log.info("JavaContent :: Internal error deleting authorId");
             e.printStackTrace();
@@ -393,12 +394,39 @@ public class JavaContent implements  Content{
     }
 
     private Result<Void> deleteUserVotes(String userId) {
+        List<Vote> votesToUpdate;
         try {
-            hibernate.jpql("DELETE FROM Vote v WHERE v.userId = '" + userId + "'", Vote.class);
+            votesToUpdate = hibernate.jpql("SELECT v FROM Vote v WHERE v.userId = '" + userId + "'", Vote.class);
         } catch (Exception e) {
-            Log.info("JavaContent :: Internal error deleting user votes");
+            Log.info("JavaContent :: Internal error getting user votes");
             e.printStackTrace();
             return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+        for(Vote v : votesToUpdate){
+            Result<Post> resPost = getPost(v.getPostId());
+            if(!resPost.isOK()){
+                return Result.error(resPost.error());
+            }
+            Post post = resPost.value();
+            if(v.isGood()){
+                post.setUpVote(post.getUpVote() - 1);
+            } else {
+                post.setDownVote(post.getDownVote() - 1);
+            }
+            try {
+                hibernate.update(post);
+            } catch (Exception e) {
+                Log.info("JavaContent :: Internal error updating post");
+                e.printStackTrace();
+                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+            }
+            try {
+                hibernate.delete(v);
+            } catch (Exception e) {
+                Log.info("JavaContent :: Internal error deleting vote");
+                e.printStackTrace();
+                return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+            }
         }
         return Result.ok();
     }

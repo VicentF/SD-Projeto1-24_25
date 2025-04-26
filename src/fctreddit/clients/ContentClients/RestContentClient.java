@@ -8,9 +8,9 @@ import org.glassfish.jersey.client.ClientProperties;
 
 import fctreddit.api.java.Result;
 import fctreddit.api.java.Result.ErrorCode;
-import fctreddit.api.rest.RestUsers;
+import fctreddit.api.rest.RestContent;
 import fctreddit.server.Discovery;
-import fctreddit.server.rest.UsersServer;
+import fctreddit.server.rest.ContentServer;
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
@@ -40,7 +40,7 @@ public class RestContentClient {
 			discovery = new Discovery(Discovery.DISCOVERY_ADDR);
 			discovery.start();
 
-			this.serverURI = discovery.knownUrisOf(UsersServer.SERVICE, 1)[0];
+			this.serverURI = discovery.knownUrisOf(ContentServer.SERVICE, 1)[0];
 		}catch( Exception e) {
 			Log.info( "Failed to retrieve Content Server URI.");
 			throw new RuntimeException(e);
@@ -53,16 +53,19 @@ public class RestContentClient {
 			
 			this.client = ClientBuilder.newClient(config);
 
-			target = client.target( serverURI ).path( RestUsers.PATH );
+			target = client.target( serverURI ).path( RestContent.PATH );
 	}
 
     public Result<Void> deleteAuthor(String userId, String userPassword) {
-        Response r = executeOperationDelete(target.path("deleteAuthor").path(userId).queryParam("userPassword", userPassword).request());
+		Log.info("RestContentClient :: deleteAuthor() called with userId: " + userId + " and userPassword: " + userPassword);
+        Response r = executeOperationDelete(target.queryParam(RestContent.USERID, userId).queryParam(RestContent.PASSWORD, userPassword).request());
         if(r == null) {
+			Log.info("RestContentClient :: deleteAuthor() - Response is null.");
 			return Result.error(ErrorCode.TIMEOUT);
 		}
 		int status = r.getStatus();
 		if(status != Status.OK.getStatusCode()) {
+			Log.info("RestContentClient :: deleteAuthor() - Status: " + status + " - serverUri: " + serverURI);
 			return Result.error( getErrorCodeFrom(status));
 		}
 		else {
