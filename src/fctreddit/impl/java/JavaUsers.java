@@ -25,7 +25,7 @@ public class JavaUsers implements Users{
 
     @Override
     public Result<String> createUser(User user){
-		Log.info("Erm JAVA_USERS");
+		//Log.info("Erm JAVA_USERS");
         String userId = user.getUserId();
 		if (!isValid(userId, user.getPassword(), user.getFullName(), user.getEmail())) {
             System.out.println("User object invalid.");
@@ -64,7 +64,6 @@ public class JavaUsers implements Users{
             System.out.println("Password is incorrect.");
             return Result.error(Result.ErrorCode.FORBIDDEN);
 		}
-
 		return Result.ok(user);
     }
 

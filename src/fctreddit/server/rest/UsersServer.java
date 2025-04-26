@@ -27,13 +27,13 @@ public class UsersServer {
 	public static void main(String[] args) {
 		try {
 		
-			Log.info("erm uhhh uhmmmm mmmmmm uhhhh can i get uhhhh");
+			//Log.info("erm uhhh uhmmmm mmmmmm uhhhh can i get uhhhh");
 				
 			ResourceConfig config = new ResourceConfig();
-			Log.info("é o config register");
+			//Log.info("é o config register");
 			config.register(UsersResource.class);
 
-			Log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+			//Log.info("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
 			String ip = InetAddress.getLocalHost().getHostAddress();
 			String serverURI = String.format(SERVER_URI_FMT, ip, PORT);
@@ -42,7 +42,7 @@ public class UsersServer {
 			Log.info(String.format("%s Server ready @ %s\n",  SERVICE, serverURI));
 			
 			discovery = new Discovery(Discovery.DISCOVERY_ADDR, SERVICE, serverURI);
-			Log.info("uhm 2");
+			//Log.info("uhm 2");
 			discovery.start();
 
 		} catch( Exception e) {
