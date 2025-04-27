@@ -78,28 +78,28 @@ public final class ImageGrpc {
   }
 
   private static volatile io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs,
-      fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult> getDeleteImageMethod;
+      fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage> getDeleteImageMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "deleteImage",
       requestType = fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs.class,
-      responseType = fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.class,
+      responseType = fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
   public static io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs,
-      fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult> getDeleteImageMethod() {
-    io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs, fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult> getDeleteImageMethod;
+      fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage> getDeleteImageMethod() {
+    io.grpc.MethodDescriptor<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs, fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage> getDeleteImageMethod;
     if ((getDeleteImageMethod = ImageGrpc.getDeleteImageMethod) == null) {
       synchronized (ImageGrpc.class) {
         if ((getDeleteImageMethod = ImageGrpc.getDeleteImageMethod) == null) {
           ImageGrpc.getDeleteImageMethod = getDeleteImageMethod =
-              io.grpc.MethodDescriptor.<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs, fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult>newBuilder()
+              io.grpc.MethodDescriptor.<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs, fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "deleteImage"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
                   fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.getDefaultInstance()))
+                  fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.getDefaultInstance()))
               .setSchemaDescriptor(new ImageMethodDescriptorSupplier("deleteImage"))
               .build();
         }
@@ -173,7 +173,7 @@ public final class ImageGrpc {
     /**
      */
     default void deleteImage(fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs request,
-        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult> responseObserver) {
+        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getDeleteImageMethod(), responseObserver);
     }
   }
@@ -224,7 +224,7 @@ public final class ImageGrpc {
     /**
      */
     public void deleteImage(fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs request,
-        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult> responseObserver) {
+        io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getDeleteImageMethod(), getCallOptions()), request, responseObserver);
     }
@@ -263,7 +263,7 @@ public final class ImageGrpc {
 
     /**
      */
-    public fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult deleteImage(fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs request) {
+    public fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage deleteImage(fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getDeleteImageMethod(), getCallOptions(), request);
     }
@@ -295,7 +295,7 @@ public final class ImageGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult> deleteImage(
+    public com.google.common.util.concurrent.ListenableFuture<fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage> deleteImage(
         fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getDeleteImageMethod(), getCallOptions()), request);
@@ -333,7 +333,7 @@ public final class ImageGrpc {
           break;
         case METHODID_DELETE_IMAGE:
           serviceImpl.deleteImage((fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs) request,
-              (io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult>) responseObserver);
+              (io.grpc.stub.StreamObserver<fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -372,7 +372,7 @@ public final class ImageGrpc {
           io.grpc.stub.ServerCalls.asyncUnaryCall(
             new MethodHandlers<
               fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageArgs,
-              fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult>(
+              fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage>(
                 service, METHODID_DELETE_IMAGE)))
         .build();
   }

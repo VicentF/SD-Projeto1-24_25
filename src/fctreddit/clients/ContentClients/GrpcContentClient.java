@@ -1,13 +1,9 @@
 package fctreddit.clients.ContentClients;
 
 import java.net.URI;
-import java.util.List;
-
-import fctreddit.api.Post;
 import fctreddit.api.java.Result;
 import fctreddit.impl.grpc.generated_java.ContentGrpc;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf;
-import fctreddit.impl.grpc.util.DataModelAdaptor;
 import io.grpc.Channel;
 import io.grpc.LoadBalancerRegistry;
 import io.grpc.ManagedChannelBuilder;

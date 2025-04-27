@@ -77,10 +77,12 @@ public class JavaImages implements Image {
         initializeContentClient();
         Result<User> resUser = client.getUser(userId, password);
         if(!resUser.isOK()){
+            Log.info("User not found: " + userId);
             return Result.error(resUser.error());
         }
         Path imagePath = Paths.get(userId, imageId);
         if (!Files.exists(imagePath)) {
+            Log.info("Image not found: " + imagePath.toString());
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
         try {

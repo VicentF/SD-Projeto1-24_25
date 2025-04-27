@@ -1,14 +1,17 @@
 package fctreddit.clients.ImagesClients;
 
-import com.google.protobuf.ByteString;
 import fctreddit.api.java.Result;
 import fctreddit.impl.grpc.generated_java.ImageGrpc;
 import fctreddit.impl.grpc.generated_java.ImageProtoBuf;
-import io.grpc.*;
+import io.grpc.LoadBalancerRegistry;
 import io.grpc.internal.PickFirstLoadBalancerProvider;
+import java.util.logging.Logger;
+import io.grpc.ManagedChannelBuilder;
+import io.grpc.Channel;
+import io.grpc.StatusRuntimeException;
+import io.grpc.Status;
 
 import java.net.URI;
-import java.util.Iterator;
 
 public class GrpcImagesClient extends ImagesClient{
 
@@ -17,6 +20,7 @@ public class GrpcImagesClient extends ImagesClient{
     }
 
     final ImageGrpc.ImageBlockingStub stub;
+    private static final Logger Log = Logger.getLogger(GrpcImagesClient.class.getName());
 
     public GrpcImagesClient(URI  serverURI) {
         Channel channel = ManagedChannelBuilder.forAddress(serverURI.getHost(), serverURI.getPort())
@@ -24,17 +28,20 @@ public class GrpcImagesClient extends ImagesClient{
         stub = ImageGrpc.newBlockingStub(channel);
     }
 
+    @Override
     public Result<Void> deleteImage(String userId, String imageId, String password) {
         try {
-
-            ImageProtoBuf.DeleteImageResult res = stub.deleteImage(ImageProtoBuf.DeleteImageArgs.newBuilder()
+            Log.info("Delete image request: " + userId + " " + imageId + " " + password);
+            ImageProtoBuf.EmptyMessage res = stub.deleteImage(ImageProtoBuf.DeleteImageArgs.newBuilder()
                     .setUserId(userId)
                     .setImageId(imageId)
                     .setPassword(password)
                     .build());
+            Log.info("Delete image worked");
             return Result.ok(null);
         }
         catch (StatusRuntimeException sre) {
+            Log.info("Delete image failed: " + statusToErrorCode(sre.getStatus()));
             return Result.error( statusToErrorCode(sre.getStatus()) );
         }
     }

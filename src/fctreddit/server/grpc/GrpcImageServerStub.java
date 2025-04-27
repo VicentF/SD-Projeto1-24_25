@@ -67,14 +67,14 @@ public class GrpcImageServerStub implements ImageGrpc.AsyncService, BindableServ
     }
 
     @Override
-    public void deleteImage(ImageProtoBuf.DeleteImageArgs request, StreamObserver<ImageProtoBuf.DeleteImageResult> responseObserver) {
+    public void deleteImage(ImageProtoBuf.DeleteImageArgs request, StreamObserver<ImageProtoBuf.EmptyMessage> responseObserver) {
 
         Result<Void> res = impl.deleteImage(request.getUserId(), request.getImageId(), request.hasPassword() ? request.getPassword() : null);
 
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            responseObserver.onNext( ImageProtoBuf.DeleteImageResult.newBuilder()
+            responseObserver.onNext( ImageProtoBuf.EmptyMessage.newBuilder()
                     .build() );
             responseObserver.onCompleted();
         }

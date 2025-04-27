@@ -3532,30 +3532,30 @@ public final class ImageProtoBuf {
 
   }
 
-  public interface DeleteImageResultOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:DeleteImageResult)
+  public interface EmptyMessageOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:EmptyMessage)
       com.google.protobuf.MessageOrBuilder {
   }
   /**
-   * Protobuf type {@code DeleteImageResult}
+   * Protobuf type {@code EmptyMessage}
    */
-  public static final class DeleteImageResult extends
+  public static final class EmptyMessage extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:DeleteImageResult)
-      DeleteImageResultOrBuilder {
+      // @@protoc_insertion_point(message_implements:EmptyMessage)
+      EmptyMessageOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use DeleteImageResult.newBuilder() to construct.
-    private DeleteImageResult(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use EmptyMessage.newBuilder() to construct.
+    private EmptyMessage(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private DeleteImageResult() {
+    private EmptyMessage() {
     }
 
     @java.lang.Override
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new DeleteImageResult();
+      return new EmptyMessage();
     }
 
     @java.lang.Override
@@ -3563,7 +3563,7 @@ public final class ImageProtoBuf {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private DeleteImageResult(
+    private EmptyMessage(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -3604,15 +3604,15 @@ public final class ImageProtoBuf {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_DeleteImageResult_descriptor;
+      return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_EmptyMessage_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_DeleteImageResult_fieldAccessorTable
+      return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_EmptyMessage_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.class, fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.Builder.class);
+              fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.class, fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.Builder.class);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -3648,10 +3648,10 @@ public final class ImageProtoBuf {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult)) {
+      if (!(obj instanceof fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage)) {
         return super.equals(obj);
       }
-      fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult other = (fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult) obj;
+      fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage other = (fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage) obj;
 
       if (!unknownFields.equals(other.unknownFields)) return false;
       return true;
@@ -3669,69 +3669,69 @@ public final class ImageProtoBuf {
       return hash;
     }
 
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(byte[] data)
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(java.io.InputStream input)
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseDelimitedFrom(java.io.InputStream input)
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseDelimitedFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parseFrom(
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3744,7 +3744,7 @@ public final class ImageProtoBuf {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult prototype) {
+    public static Builder newBuilder(fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3760,26 +3760,26 @@ public final class ImageProtoBuf {
       return builder;
     }
     /**
-     * Protobuf type {@code DeleteImageResult}
+     * Protobuf type {@code EmptyMessage}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:DeleteImageResult)
-        fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResultOrBuilder {
+        // @@protoc_insertion_point(builder_implements:EmptyMessage)
+        fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_DeleteImageResult_descriptor;
+        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_EmptyMessage_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_DeleteImageResult_fieldAccessorTable
+        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_EmptyMessage_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.class, fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.Builder.class);
+                fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.class, fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.Builder.class);
       }
 
-      // Construct using fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.newBuilder()
+      // Construct using fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3803,17 +3803,17 @@ public final class ImageProtoBuf {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_DeleteImageResult_descriptor;
+        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.internal_static_EmptyMessage_descriptor;
       }
 
       @java.lang.Override
-      public fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult getDefaultInstanceForType() {
-        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.getDefaultInstance();
+      public fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage getDefaultInstanceForType() {
+        return fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.getDefaultInstance();
       }
 
       @java.lang.Override
-      public fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult build() {
-        fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult result = buildPartial();
+      public fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage build() {
+        fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3821,8 +3821,8 @@ public final class ImageProtoBuf {
       }
 
       @java.lang.Override
-      public fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult buildPartial() {
-        fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult result = new fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult(this);
+      public fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage buildPartial() {
+        fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage result = new fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage(this);
         onBuilt();
         return result;
       }
@@ -3861,16 +3861,16 @@ public final class ImageProtoBuf {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult) {
-          return mergeFrom((fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult)other);
+        if (other instanceof fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage) {
+          return mergeFrom((fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult other) {
-        if (other == fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult.getDefaultInstance()) return this;
+      public Builder mergeFrom(fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage other) {
+        if (other == fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
@@ -3886,11 +3886,11 @@ public final class ImageProtoBuf {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult parsedMessage = null;
+        fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult) e.getUnfinishedMessage();
+          parsedMessage = (fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -3912,41 +3912,41 @@ public final class ImageProtoBuf {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:DeleteImageResult)
+      // @@protoc_insertion_point(builder_scope:EmptyMessage)
     }
 
-    // @@protoc_insertion_point(class_scope:DeleteImageResult)
-    private static final fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:EmptyMessage)
+    private static final fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult();
+      DEFAULT_INSTANCE = new fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage();
     }
 
-    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult getDefaultInstance() {
+    public static fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<DeleteImageResult>
-        PARSER = new com.google.protobuf.AbstractParser<DeleteImageResult>() {
+    private static final com.google.protobuf.Parser<EmptyMessage>
+        PARSER = new com.google.protobuf.AbstractParser<EmptyMessage>() {
       @java.lang.Override
-      public DeleteImageResult parsePartialFrom(
+      public EmptyMessage parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new DeleteImageResult(input, extensionRegistry);
+        return new EmptyMessage(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<DeleteImageResult> parser() {
+    public static com.google.protobuf.Parser<EmptyMessage> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<DeleteImageResult> getParserForType() {
+    public com.google.protobuf.Parser<EmptyMessage> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public fctreddit.impl.grpc.generated_java.ImageProtoBuf.DeleteImageResult getDefaultInstanceForType() {
+    public fctreddit.impl.grpc.generated_java.ImageProtoBuf.EmptyMessage getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3978,10 +3978,10 @@ public final class ImageProtoBuf {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_DeleteImageArgs_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_DeleteImageResult_descriptor;
+    internal_static_EmptyMessage_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_DeleteImageResult_fieldAccessorTable;
+      internal_static_EmptyMessage_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -3999,13 +3999,13 @@ public final class ImageProtoBuf {
       "\022\017\n\007imageId\030\002 \001(\t\"\036\n\016GetImageResult\022\014\n\004d" +
       "ata\030\001 \001(\014\"V\n\017DeleteImageArgs\022\016\n\006userId\030\001" +
       " \001(\t\022\017\n\007imageId\030\002 \001(\t\022\025\n\010password\030\003 \001(\tH" +
-      "\000\210\001\001B\013\n\t_password\"\023\n\021DeleteImageResult2\245" +
-      "\001\n\005Image\0225\n\013createImage\022\020.CreateImageArg" +
-      "s\032\022.CreateImageResult\"\000\022.\n\010getImage\022\r.Ge" +
-      "tImageArgs\032\017.GetImageResult\"\0000\001\0225\n\013delet" +
-      "eImage\022\020.DeleteImageArgs\032\022.DeleteImageRe" +
-      "sult\"\000B3\n\"fctreddit.impl.grpc.generated_" +
-      "javaB\rImageProtoBufb\006proto3"
+      "\000\210\001\001B\013\n\t_password\"\016\n\014EmptyMessage2\240\001\n\005Im" +
+      "age\0225\n\013createImage\022\020.CreateImageArgs\032\022.C" +
+      "reateImageResult\"\000\022.\n\010getImage\022\r.GetImag" +
+      "eArgs\032\017.GetImageResult\"\0000\001\0220\n\013deleteImag" +
+      "e\022\020.DeleteImageArgs\032\r.EmptyMessage\"\000B3\n\"" +
+      "fctreddit.impl.grpc.generated_javaB\rImag" +
+      "eProtoBufb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4041,11 +4041,11 @@ public final class ImageProtoBuf {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_DeleteImageArgs_descriptor,
         new java.lang.String[] { "UserId", "ImageId", "Password", "Password", });
-    internal_static_DeleteImageResult_descriptor =
+    internal_static_EmptyMessage_descriptor =
       getDescriptor().getMessageTypes().get(5);
-    internal_static_DeleteImageResult_fieldAccessorTable = new
+    internal_static_EmptyMessage_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_DeleteImageResult_descriptor,
+        internal_static_EmptyMessage_descriptor,
         new java.lang.String[] { });
   }
 

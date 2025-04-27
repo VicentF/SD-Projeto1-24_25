@@ -47,6 +47,7 @@ public class RestImagesClient extends ImagesClient {
 			target = client.target( serverURI ).path( RestImage.PATH );
 	}
 
+	@Override
     public Result<Void> deleteImage(String userId, String imageId, String password){
         Response r = executeOperationDelete(target.path(userId).path(imageId).queryParam(RestImage.PASSWORD, password).request());
         if(r == null) {

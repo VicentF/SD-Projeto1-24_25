@@ -9,7 +9,7 @@ service Image {
 	
 	rpc getImage( GetImageArgs ) returns ( stream GetImageResult ) {}
 
-	rpc deleteImage( DeleteImageArgs ) returns ( DeleteImageResult ) {}
+	rpc deleteImage( DeleteImageArgs ) returns ( EmptyMessage ) {}
 	 
 }
 
@@ -38,5 +38,5 @@ message DeleteImageArgs {
 	optional string password = 3;
 }
 
-message DeleteImageResult {
+message EmptyMessage {
 }

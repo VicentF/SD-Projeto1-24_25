@@ -1,5 +1,7 @@
 package fctreddit.server.grpc;
 
+import java.util.List;
+
 import fctreddit.api.Post;
 import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
@@ -7,19 +9,19 @@ import fctreddit.impl.grpc.generated_java.ContentGrpc;
 import fctreddit.impl.grpc.generated_java.ContentProtoBuf;
 import fctreddit.impl.grpc.util.DataModelAdaptor;
 import fctreddit.impl.java.JavaContent;
-
 import io.grpc.BindableService;
 import io.grpc.ServerServiceDefinition;
 import io.grpc.stub.StreamObserver;
-
-import java.util.List;
+import java.util.logging.Logger;
 
 public class GrpcContentServerStub implements ContentGrpc.AsyncService, BindableService {
 
-    String uri;
-    Content impl = new JavaContent(uri);
-    public GrpcContentServerStub(String uri) {
-        this.uri = uri;
+    private static String uri;
+    private static Content impl;
+    private static final Logger Log = Logger.getLogger(GrpcContentServerStub.class.getName());
+    public GrpcContentServerStub(String URI) {
+        this.uri = URI;
+        impl = new JavaContent(uri);
     }
 
     @Override
@@ -55,6 +57,25 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else  {
+            ContentProtoBuf.GetPostsResult.Builder builder = ContentProtoBuf.GetPostsResult.newBuilder();
+            for (String s: res.value()){
+                builder.addPostId(s);
+
+            }
+
+            responseObserver.onNext(builder.build());
+            responseObserver.onCompleted();
+        }
+    }
+    /*public void getPosts(ContentProtoBuf.GetPostsArgs request, StreamObserver<ContentProtoBuf.GetPostsResult> responseObserver) {
+
+        Result<List<String>> res = impl.getPosts(
+                request.getTimestamp(),
+                request.getSortOrder());
+
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else  {
             for (String s: res.value()){
                 responseObserver.onNext(ContentProtoBuf.GetPostsResult.newBuilder()
                         .setPostId(0, s)
@@ -62,7 +83,7 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
             }
             responseObserver.onCompleted();
         }
-    }
+    }*/
 
     @Override
     public void getPost(ContentProtoBuf.GetPostArgs request, StreamObserver<ContentProtoBuf.GrpcPost> responseObserver) {
@@ -82,7 +103,28 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
 
     @Override
     public void getPostAnswers(ContentProtoBuf.GetPostAnswersArgs request, StreamObserver<ContentProtoBuf.GetPostsResult> responseObserver) {
+        Result<List<String>> res = impl.getPostAnswers(
+                request.getPostId(),
+                request.getTimeout()
+        );
 
+        if (!res.isOK()){
+            Log.info("Error in getPostAnswers: " + res.error());
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        }
+        else {
+            ContentProtoBuf.GetPostsResult.Builder builder = ContentProtoBuf.GetPostsResult.newBuilder();
+
+            for (String s : res.value()) {
+                builder.addPostId(s); 
+            }
+
+            responseObserver.onNext(builder.build());
+            responseObserver.onCompleted();
+        }
+    }
+    /*public void getPostAnswers(ContentProtoBuf.GetPostAnswersArgs request, StreamObserver<ContentProtoBuf.GetPostsResult> responseObserver) {
+        int counter = 0;
         Result<List<String>> res = impl.getPostAnswers(
                 request.getPostId(),
                 request.getTimeout()
@@ -93,13 +135,14 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
         else  {
             for (String s: res.value()){
                 responseObserver.onNext(ContentProtoBuf.GetPostsResult.newBuilder()
-                        .setPostId(0, s)
+                        .setPostId(counter, s)
                         .build());
+                        counter++;
             }
             responseObserver.onCompleted();
         }
 
-    }
+    }*/
 
     @Override
     public void updatePost(ContentProtoBuf.UpdatePostArgs request, StreamObserver<ContentProtoBuf.GrpcPost> responseObserver) {
@@ -218,7 +261,8 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            responseObserver.onNext( ContentProtoBuf.VoteCountResult.newBuilder().build());
+            responseObserver.onNext( ContentProtoBuf.VoteCountResult.newBuilder()
+                    .setCount(res.value()).build());
             responseObserver.onCompleted();
         }
 
@@ -234,11 +278,41 @@ public class GrpcContentServerStub implements ContentGrpc.AsyncService, Bindable
         if (!res.isOK())
             responseObserver.onError(errorCodeToStatus(res.error()));
         else {
-            responseObserver.onNext( ContentProtoBuf.VoteCountResult.newBuilder().build());
+            responseObserver.onNext(  ContentProtoBuf.VoteCountResult.newBuilder()
+                    .setCount(res.value()).build());
             responseObserver.onCompleted();
         }
 
     }
+
+    /*public void getUpVotes(ContentProtoBuf.GetPostArgs request, StreamObserver<ContentProtoBuf.VoteCountResult> responseObserver) {
+
+        Result<Integer> res = impl.getupVotes(
+                request.getPostId()
+        );
+
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext( ContentProtoBuf.VoteCountResult.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+
+    }*/
+    /*public void getDownVotes(ContentProtoBuf.GetPostArgs request, StreamObserver<ContentProtoBuf.VoteCountResult> responseObserver) {
+
+        Result<Integer> res = impl.getDownVotes(
+                request.getPostId()
+        );
+
+        if (!res.isOK())
+            responseObserver.onError(errorCodeToStatus(res.error()));
+        else {
+            responseObserver.onNext( ContentProtoBuf.VoteCountResult.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+
+    }*/
 
     protected static Throwable errorCodeToStatus(Result.ErrorCode error ) {
         var status =  switch( error) {

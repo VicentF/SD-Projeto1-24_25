@@ -12,7 +12,6 @@ import fctreddit.api.java.Content;
 import fctreddit.api.java.Result;
 import fctreddit.clients.ImagesClients.ImagesClient;
 import fctreddit.clients.ImagesClients.ImagesClientFactory;
-import fctreddit.clients.ImagesClients.RestImagesClient;
 import fctreddit.clients.UsersClients.UsersClient;
 import fctreddit.clients.UsersClients.UsersClientFactory;
 import fctreddit.impl.Vote;
@@ -28,13 +27,15 @@ public class JavaContent implements  Content{
     private final String serverUri;
     private final Map<String, Object> postLocks = new ConcurrentHashMap<>();
 
-    public JavaContent(String serverUri) {
+    public JavaContent(String uri) {
         hibernate = Hibernate.getInstance();
-        this.serverUri = serverUri;
+        this.serverUri = uri;
+        //Log.info("JavaContent :: serverURI = " + serverUri);
     }
 
     @Override
     public Result<String> createPost(Post post, String userPassword){
+        Log.info("JavaContent :: Create Post");
         post.setCreationTimestamp(System.currentTimeMillis());
         post.setPostId(UUID.randomUUID().toString());
         initializeUsersClient();
@@ -51,10 +52,10 @@ public class JavaContent implements  Content{
             e.printStackTrace();
             return Result.error(Result.ErrorCode.INTERNAL_ERROR);
         }
-        if(post.getParentUrl() == null){
+        if(post.getParentUrl() == null || post.getParentUrl().isEmpty()){
             postLocks.put(post.getPostId(), new Object());
         } else {
-            //Log.info("JavaContent :: Post has parentUrl: " + post.getParentUrl());
+            Log.info("JavaContent :: Post has parentUrl: " + post.getParentUrl());
             postLocks.put(post.getPostId(), new Object());
             String[] split = post.getParentUrl().split("/");
             String parentPostId = split[split.length - 1];
@@ -75,7 +76,7 @@ public class JavaContent implements  Content{
         } else {
             query += "SELECT p.postId FROM Post p WHERE p.parentUrl IS NULL";
         }
-        if(sortOrder == null){
+        if(sortOrder == null || sortOrder.isEmpty()){
             query += " ORDER BY p.creationTimestamp ASC";
             sortedKeys = hibernate.jpql(query, String.class);
         } else {
@@ -122,6 +123,7 @@ public class JavaContent implements  Content{
     @Override
     public Result<List<String>> getPostAnswers(String postId, long maxTimeout){
         //Log.info("JavaContent :: Get Post Answers");
+        Log.info("JavaContent :: serverURI = " + serverUri);
         if(!this.getPost(postId).isOK()){
             return Result.error(Result.ErrorCode.NOT_FOUND);
         }
@@ -137,7 +139,7 @@ public class JavaContent implements  Content{
                 return Result.error(Result.ErrorCode.INTERNAL_ERROR);
             }
         }
-        //Log.info("JavaContent :: p.parentUrl = " + serverUri + "/" + postId);
+        //Log.info("JavaContent :: p.parentUrl = " + serverUri + "/posts/" + postId);
         String parentUrl = serverUri + "/posts/" + postId;
         String query = "SELECT p.postId FROM Post p WHERE p.parentUrl = '" + parentUrl + "' ORDER BY p.creationTimestamp ASC";
         List<String> sortedKeys = hibernate.jpql(query, String.class);
@@ -166,10 +168,10 @@ public class JavaContent implements  Content{
             Log.info("JavaContent :: Trouble getting user");
             return Result.error(resUser.error());
         }
-        if(post.getContent() != null){
+        if(post.getContent() != null && !post.getContent().isEmpty()){
             oldPost.setContent(post.getContent());
         }
-        if(post.getMediaUrl() != null){
+        if(post.getMediaUrl() != null && !post.getMediaUrl().isEmpty()){
             oldPost.setMediaUrl(post.getMediaUrl());
         }
         //checkar se é suposto lançar erro quando se tenta updatar algo que não se deve
@@ -215,17 +217,22 @@ public class JavaContent implements  Content{
 
     @Override
     public Result<Void> deletePost(String postId, String userPassword) {
+        Log.info("JavaContent :: Delete Post");
         Result<Post> resPost = getPost(postId);
         if(!resPost.isOK()){
             return Result.error(resPost.error());
         }
         Post post = resPost.value();
         String mediaUrl = post.getMediaUrl();
-        if(mediaUrl != null){
+        if(mediaUrl != null && !mediaUrl.isEmpty()){
+            Log.info("JavaContent :: Post has mediaUrl: " + mediaUrl);
             Log.info("Checkpoint1");
             String[] split = mediaUrl.split("/");
             String imageId = split[split.length - 1];
             initializeImagesClient();
+            /*Log.info("JavaContent :: imageId = " + imageId);
+            Log.info("JavaContent :: userId = " + post.getAuthorId());
+            Log.info("JavaContent :: password = " + userPassword);*/
             Result<Void> resImage = imageClient.deleteImage(post.getAuthorId(), imageId, userPassword);
             Log.info("Checkpoint2");
             if(!resImage.isOK()){
